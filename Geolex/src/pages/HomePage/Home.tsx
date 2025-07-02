@@ -22,8 +22,8 @@ const Home: React.FC = () => {
         />
       </div>
 
-      {/* Mobile Categories Toggle Button - Only visible on mobile */}
-      <div className="block md:hidden bg-white border-y border-gray-200">
+      {/* Mobile Categories Toggle Button - Visible on mobile and medium screens (including Zenbook) */}
+      <div className="block lg:hidden bg-white border-y border-gray-200">
         <div className="flex items-center justify-center px-6 py-4">
           {/* Left horizontal line */}
           <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-gray-400"></div>
@@ -87,8 +87,8 @@ const Home: React.FC = () => {
         </div>
       </div>
 
-      {/* Categories Section - Hidden on mobile by default, always visible on desktop */}
-      <div className={`md:block transition-all duration-400 ease-in-out origin-top ${
+      {/* Categories Section - Hidden on mobile/medium by default, always visible on large screens */}
+      <div className={`lg:block transition-all duration-400 ease-in-out origin-top ${
         showCategories 
           ? "opacity-100 scale-y-100 h-auto" 
           : "opacity-0 scale-y-0 h-0 overflow-hidden"
