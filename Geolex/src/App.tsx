@@ -6,7 +6,7 @@ import "./App.css";
 function App() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar enableShrinking={false} />
+      <Navbar enableShrinking={false} size="sm" />
       <Home />
     </div>
   );
