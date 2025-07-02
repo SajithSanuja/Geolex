@@ -13,6 +13,7 @@ interface ProductBoxProps {
   reviewCount?: number;
 }
 
+// Add performance optimizations to ProductBox
 const ProductBox: React.FC<ProductBoxProps> = ({
   id,
   name,
@@ -31,7 +32,13 @@ const ProductBox: React.FC<ProductBoxProps> = ({
     : discount;
 
   return (
-    <div className="relative rounded-lg overflow-hidden group h-full flex flex-col">
+    <div
+      className="relative rounded-lg overflow-hidden group h-full flex flex-col"
+      style={{
+        transform: "translateZ(0)", // Hardware acceleration
+        willChange: "auto",
+      }}
+    >
       {/* Background */}
       <div className="absolute inset-0 bg-white/20 border border-white/30 rounded-lg shadow-xl"></div>
 
@@ -73,6 +80,12 @@ const ProductBox: React.FC<ProductBoxProps> = ({
             src={image}
             alt={name}
             className="w-full h-full object-contain p-1.5 sm:p-2 md:p-3 group-hover:scale-105 transition-transform duration-300"
+            style={{
+              transform: "translateZ(0)",
+              willChange: "transform",
+            }}
+            loading="lazy"
+            decoding="async"
           />
 
           {/* Stock Status */}

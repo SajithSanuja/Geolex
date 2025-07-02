@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 interface BannerProps {
   images: string[];
@@ -31,64 +31,50 @@ const Banner: React.FC<BannerProps> = ({
     setImagesLoaded(new Array(images.length).fill(false));
   }, [images.length]);
 
-  const goToSlide = (index: number) => {
+  // Optimize image transitions and reduce repaints
+  const goToSlide = useCallback((index: number) => {
     setCurrentImageIndex(index);
-  };
+  }, []);
 
-  const handleImageLoad = (index: number) => {
+  const handleImageLoad = useCallback((index: number) => {
     setImagesLoaded((prev) => {
       const newState = [...prev];
       newState[index] = true;
       return newState;
     });
-  };
+  }, []);
 
-  if (!images || images.length === 0) {
-    return (
-      <div
-        className={`w-full ${height} bg-gray-300 flex items-center justify-center`}
-      >
-        <p className="text-gray-600">No images available</p>
-      </div>
-    );
-  }
-
+  // Optimize the main container
   return (
     <div
       className={`relative w-full ${height} overflow-hidden bg-gray-900 rounded-lg shadow-lg`}
+      style={{
+        transform: "translateZ(0)", // Force hardware acceleration
+        willChange: "auto",
+      }}
     >
       {/* Images */}
       {images.map((image, index) => (
         <div
           key={index}
-          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+          className={`absolute inset-0 transition-opacity duration-500 ease-out ${
             index === currentImageIndex ? "opacity-100" : "opacity-0"
           }`}
+          style={{
+            transform: "translateZ(0)",
+            willChange: index === currentImageIndex ? "opacity" : "auto",
+          }}
         >
-          {/* Loading placeholder */}
-          {!imagesLoaded[index] && (
-            <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 animate-pulse flex items-center justify-center">
-              <div className="w-16 h-16 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
-            </div>
-          )}
-
           <img
             src={image}
             alt={`Banner ${index + 1}`}
-            className={`w-full h-full transition-opacity duration-500 ${
-              imagesLoaded[index] ? "opacity-100" : "opacity-0"
-            }`}
             style={{
               objectFit: "cover",
               objectPosition: "center 20%",
-              imageRendering: "auto", // Changed from "high-quality"
               width: "100%",
               height: "100%",
-            }}
-            onLoad={() => handleImageLoad(index)}
-            onError={() => {
-              console.warn(`Failed to load banner image: ${image}`);
-              handleImageLoad(index);
+              transform: "translateZ(0)", // Hardware acceleration
+              imageRendering: "auto",
             }}
             loading={index === 0 ? "eager" : "lazy"}
             decoding="async"

@@ -65,6 +65,43 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  /* Add performance optimizations */
+  transform: translateZ(0); /* Force hardware acceleration */
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Add to index.css - Hardware acceleration and smooth scrolling */
+* {
+  scroll-behavior: smooth;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch; /* iOS smooth scrolling */
+}
+
+/* Optimize transitions globally */
+* {
+  will-change: auto;
+}
+
+/* Optimize elements that frequently change */
+.transition-all, 
+.group-hover\\:scale-105,
+.hover\\:scale-110,
+.animate-spin,
+.animate-pulse {
+  will-change: transform;
+  transform: translateZ(0); /* Force GPU acceleration */
+  backface-visibility: hidden;
+}
+
+/* Optimize image rendering */
+img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: optimize-contrast;
+  transform: translateZ(0);
 }
 
 h1 {
