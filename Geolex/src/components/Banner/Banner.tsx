@@ -9,7 +9,7 @@ interface BannerProps {
 const Banner: React.FC<BannerProps> = ({
   images,
   height = "h-96",
-  autoSlideInterval = 3000,
+  autoSlideInterval = 8000,
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [imagesLoaded, setImagesLoaded] = useState<boolean[]>([]);
@@ -47,7 +47,7 @@ const Banner: React.FC<BannerProps> = ({
   // Optimize the main container
   return (
     <div
-      className={`relative w-full ${height} overflow-hidden bg-gray-900 rounded-lg shadow-lg`}
+      className={`relative w-full ${height} overflow-hidden bg-gray-900 shadow-lg`}
       style={{
         transform: "translateZ(0)", // Force hardware acceleration
         willChange: "auto",
