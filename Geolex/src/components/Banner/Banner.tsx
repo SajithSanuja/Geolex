@@ -84,7 +84,7 @@ const Banner: React.FC<BannerProps> = ({
 
       {/* Navigation Dots */}
       {images.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 bg-black/20 backdrop-blur-sm rounded-full px-3 py-2">
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 rounded-full px-3 py-2">
           {images.map((_, index) => (
             <button
               key={index}
@@ -118,14 +118,20 @@ const Banner: React.FC<BannerProps> = ({
         <>
           {/* Previous Arrow */}
           <button
-            onClick={() =>
+            onClick={() => {
               goToSlide(
                 currentImageIndex === 0
                   ? images.length - 1
                   : currentImageIndex - 1
-              )
-            }
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/30 backdrop-blur-sm hover:bg-black/50 text-white p-3 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50 opacity-75 hover:opacity-100"
+              );
+              // Remove focus after click to prevent persistent hover state
+              (document.activeElement as HTMLElement)?.blur();
+            }}
+            onMouseLeave={() => {
+              // Ensure button loses focus when mouse leaves
+              (document.activeElement as HTMLElement)?.blur();
+            }}
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 hover:bg-black/50 text-white p-3 rounded-full transition-all duration-300 focus:outline-none opacity-75 hover:opacity-100"
             aria-label="Previous image"
             type="button"
           >
@@ -146,14 +152,20 @@ const Banner: React.FC<BannerProps> = ({
 
           {/* Next Arrow */}
           <button
-            onClick={() =>
+            onClick={() => {
               goToSlide(
                 currentImageIndex === images.length - 1
                   ? 0
                   : currentImageIndex + 1
-              )
-            }
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/30 backdrop-blur-sm hover:bg-black/50 text-white p-3 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50 opacity-75 hover:opacity-100"
+              );
+              // Remove focus after click to prevent persistent hover state
+              (document.activeElement as HTMLElement)?.blur();
+            }}
+            onMouseLeave={() => {
+              // Ensure button loses focus when mouse leaves
+              (document.activeElement as HTMLElement)?.blur();
+            }}
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 hover:bg-black/50 text-white p-3 rounded-full transition-all duration-300 focus:outline-none opacity-75 hover:opacity-100"
             aria-label="Next image"
             type="button"
           >

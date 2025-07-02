@@ -28,6 +28,9 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Scroll behavior variables */
+  --scroll-multiplier: 2;
 }
 
 /* Tailwind Theme Extension */
@@ -65,10 +68,8 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  /* Add performance optimizations */
-  transform: translateZ(0); /* Force hardware acceleration */
-  backface-visibility: hidden;
-  perspective: 1000px;
+  /* Add scroll speed enhancement */
+  overscroll-behavior: none;
 }
 
 /* Add to index.css - Hardware acceleration and smooth scrolling */
@@ -79,6 +80,9 @@ body {
 html {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch; /* iOS smooth scrolling */
+
+  /* Increase scroll speed by adjusting scroll-padding */
+  scroll-snap-type: none;
 }
 
 /* Optimize transitions globally */

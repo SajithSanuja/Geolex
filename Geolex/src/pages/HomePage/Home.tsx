@@ -12,7 +12,7 @@ const Home: React.FC = () => {
         <Banner
           images={BannerImages}
           height="h-[80vh]"
-          autoSlideInterval={3000}
+          autoSlideInterval={8000}
         />
       </div>
 
