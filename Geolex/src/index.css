@@ -1,0 +1,100 @@
+/* Google Fonts Import - MUST BE FIRST */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap');
+
+/* Tailwind CSS Import */
+@import "tailwindcss";
+
+/* CSS Variables for Tailwind v4 */
+:root {
+  /* Font Family Variables */
+  --font-roboto: 'Roboto', sans-serif;
+  --font-poppins: 'Poppins', sans-serif;
+  --font-inter: 'Inter', sans-serif;
+
+  /* Category Color Variables */
+  --category-bg: #151b25;
+  --category-hover-bg: #283346;
+  --category-text: #ffffff;
+  --category-text-hover: #13ee9e;
+  --category-border: #1c2431;
+  --category-plate-bg: #1a2332; /* Dark blue plate background */
+
+  /* Global Theme Variables */
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tailwind Theme Extension */
+@theme {
+  --font-family-roboto: var(--font-roboto);
+  --font-family-poppins: var(--font-poppins);
+  --font-family-inter: var(--font-inter);
+  
+  /* Custom colors using CSS variables */
+  --color-category-bg: var(--category-bg);
+  --color-category-hover-bg: var(--category-hover-bg);
+  --color-category-text: var(--category-text);
+  --color-category-text-hover: var(--category-text-hover);
+  --color-category-border: var(--category-border);
+  --color-category-plate-bg: var(--category-plate-bg);
+}
+
+/* CSS for PNG icon - NO HOVER COLOR CHANGE */
+.category-icon {
+  filter: brightness(0) invert(1); /* Makes icon white */
+  transition: filter 0.2s ease-in-out;
+}
+
+/* Global Styles */
+a {
+  font-weight: 500;
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: #13ee9e;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  
+  a:hover {
+    color: #13ee9e;
+  }
+}
