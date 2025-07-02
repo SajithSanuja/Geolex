@@ -44,13 +44,16 @@ const Banner: React.FC<BannerProps> = ({
     });
   }, []);
 
-  // Optimize the main container
+  // Optimize the main container with mobile-first responsive height
   return (
     <div
       className={`relative w-full ${height} overflow-hidden bg-gray-900 shadow-lg`}
       style={{
         transform: "translateZ(0)", // Force hardware acceleration
         willChange: "auto",
+        // Mobile-specific adjustments
+        minHeight: "200px", // Ensure minimum height on very small screens
+        maxHeight: "100vh", // Prevent banner from exceeding viewport height
       }}
     >
       {/* Images */}
@@ -84,23 +87,23 @@ const Banner: React.FC<BannerProps> = ({
 
       {/* Navigation Dots */}
       {images.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 rounded-full px-3 py-2">
+        <div className="absolute bottom-2 sm:bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-1 sm:space-x-2 rounded-full px-2 sm:px-3 py-1 sm:py-2">
           {images.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`rounded-full cursor-pointer transition-all duration-300 focus:outline-none focus:ring-1 focus:ring-white/30 ${
+              className={`rounded-full cursor-pointer transition-all duration-300 focus:outline-none ${
                 index === currentImageIndex
-                  ? "bg-white scale-150"
-                  : "bg-white/40 hover:bg-white/70 hover:scale-125"
+                  ? "bg-white scale-125 sm:scale-150"
+                  : "bg-white/40 hover:bg-white/70 hover:scale-110 sm:hover:scale-125"
               }`}
               style={{
-                width: "10px",
-                height: "10px",
-                minWidth: "10px",
-                minHeight: "10px",
-                maxWidth: "10px",
-                maxHeight: "10px",
+                width: "8px",
+                height: "8px",
+                minWidth: "8px",
+                minHeight: "8px",
+                maxWidth: "8px",
+                maxHeight: "8px",
                 borderRadius: "50%",
                 border: "none",
                 padding: "0",
@@ -131,12 +134,12 @@ const Banner: React.FC<BannerProps> = ({
               // Ensure button loses focus when mouse leaves
               (document.activeElement as HTMLElement)?.blur();
             }}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 hover:bg-black/50 text-white p-3 rounded-full transition-all duration-300 focus:outline-none opacity-75 hover:opacity-100"
+            className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 hover:bg-black/50 text-white p-2 sm:p-3 rounded-full transition-all duration-300 focus:outline-none opacity-75 hover:opacity-100"
             aria-label="Previous image"
             type="button"
           >
             <svg
-              className="w-6 h-6"
+              className="w-4 h-4 sm:w-6 sm:h-6"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -165,12 +168,12 @@ const Banner: React.FC<BannerProps> = ({
               // Ensure button loses focus when mouse leaves
               (document.activeElement as HTMLElement)?.blur();
             }}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 hover:bg-black/50 text-white p-3 rounded-full transition-all duration-300 focus:outline-none opacity-75 hover:opacity-100"
+            className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 hover:bg-black/50 text-white p-2 sm:p-3 rounded-full transition-all duration-300 focus:outline-none opacity-75 hover:opacity-100"
             aria-label="Next image"
             type="button"
           >
             <svg
-              className="w-6 h-6"
+              className="w-4 h-4 sm:w-6 sm:h-6"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

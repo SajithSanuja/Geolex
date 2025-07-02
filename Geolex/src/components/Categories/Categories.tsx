@@ -10,35 +10,36 @@ interface Category {
 
 // ===== SINGLE PLACE TO CUSTOMIZE ALL STYLING =====
 const CATEGORY_STYLES = {
-  // Rectangle dimensions
+  // Rectangle dimensions - Smaller and more compact for desktop
   rectangle: {
-    height: "min-h-[80px]",
+    height: "min-h-[80px] sm:min-h-[80px] lg:min-h-[70px]", // Reduced height, especially on desktop
     width: "flex-1",
-    padding: "p-2",
+    padding: "p-2 sm:p-3 lg:p-2", // Reduced padding on desktop
   },
 
-  // Content positioning
+  // Content positioning - More compact spacing
   layout: {
-    direction: "flex-row",
+    direction: "flex-col sm:flex-row", // Stack vertically on mobile, row on larger screens
     alignment: "items-center",
     justification: "justify-center",
-    spacing: "space-x-2",
+    spacing: "space-y-1 sm:space-y-0 sm:space-x-2 lg:space-x-1", // Reduced spacing on desktop
   },
 
-  // Icon styling
+  // Icon styling - Smaller on desktop
   icon: {
-    containerSize: "w-10 h-10",
-    imageSize: "w-10 h-10",
+    containerSize: "w-10 h-10 sm:w-12 sm:h-12 lg:w-10 lg:h-10", // Smaller on desktop
+    imageSize: "w-8 h-8 sm:w-10 sm:h-10 lg:w-8 lg:h-8", // Smaller icons on desktop
     hoverEffect: "group-hover:scale-110",
   },
 
-  // Text styling
+  // Text styling - Smaller and more compact on desktop
   text: {
-    fontSize: "text-base",
+    fontSize: "text-xs sm:text-sm lg:text-sm", // Smaller text on desktop
     fontWeight: "font-medium",
     fontFamily: "font-poppins",
     textAlign: "text-center",
     lineHeight: "leading-tight",
+    maxWidth: "max-w-[80px] sm:max-w-none lg:max-w-[70px]", // Limit width on desktop too
   },
 
   // Colors and effects - Using CSS Variables (HOVER COLORS REMOVED)
@@ -191,6 +192,48 @@ const categories: Category[] = [
   },
 ];
 
+// Enhanced responsive Categories component
+const RESPONSIVE_CATEGORY_STYLES = {
+  // Responsive dimensions
+  rectangle: {
+    height: "min-h-[60px] sm:min-h-[70px] md:min-h-[80px] lg:min-h-[90px]",
+    width: "flex-1",
+    padding: "p-1 sm:p-1.5 md:p-2 lg:p-3",
+  },
+
+  // Responsive layout
+  layout: {
+    direction: "flex-col xs:flex-row", // Stack on very small, row on larger
+    alignment: "items-center",
+    justification: "justify-center",
+    spacing: "space-y-1 xs:space-y-0 xs:space-x-1 sm:space-x-2",
+  },
+
+  // Responsive icon sizing
+  icon: {
+    containerSize: "w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 md:w-10 md:h-10",
+    imageSize: "w-6 h-6 xs:w-7 xs:h-7 sm:w-8 sm:h-8 md:w-10 md:h-10",
+    hoverEffect: "group-hover:scale-110",
+  },
+
+  // Responsive text
+  text: {
+    fontSize: "text-xs xs:text-sm sm:text-base md:text-lg",
+    fontWeight: "font-medium",
+    fontFamily: "font-poppins",
+    textAlign: "text-center",
+    lineHeight: "leading-tight",
+  },
+
+  // Enhanced responsive grid
+  grid: {
+    // Mobile: 2 columns, Tablet: 4 columns, Desktop: 7 columns
+    mobile: "grid grid-cols-2 gap-1 sm:hidden",
+    tablet: "hidden sm:grid sm:grid-cols-4 md:grid-cols-7 gap-2 md:gap-3",
+    desktop: "hidden md:flex md:flex-row",
+  },
+};
+
 const Categories: React.FC = () => {
   // Split categories into exactly 3 rows of 7 items each
   const row1 = categories.slice(0, 7);
@@ -212,6 +255,7 @@ const Categories: React.FC = () => {
     ${CATEGORY_STYLES.colors.border} 
     ${CATEGORY_STYLES.rectangle.height} 
     ${CATEGORY_STYLES.layout.spacing}
+    backdrop-blur-sm
   `
     .replace(/\s+/g, " ")
     .trim();
@@ -250,69 +294,24 @@ const Categories: React.FC = () => {
     .replace(/\s+/g, " ")
     .trim();
 
+  // Update the return section to use responsive grid instead of fixed rows
   return (
-    <section className="w-full bg-[var(--category-bg)]/80 border-y border-gray-600/30">
+    <section className="w-full bg-[var(--category-bg)] border-y border-gray-600/30">
       <div className="w-full">
         {/* Title */}
         {CATEGORY_STYLES.title.show && (
           <h2 className={titleClasses}>{CATEGORY_STYLES.title.text}</h2>
         )}
 
-        {/* Row 1 */}
-        <div className="flex w-full">
-          {row1.map((category) => (
+        {/* Responsive Grid - All categories in one responsive grid */}
+        <div className="flex flex-wrap justify-center gap-0 bg-[var(--category-bg)]">
+          {categories.map((category) => (
             <a
               key={category.id}
               href={category.href}
-              className={rectangleClasses}
+              className={rectangleClasses.replace('flex-1', 'w-[50%] sm:w-[33.333%] md:w-[25%] lg:w-[20%] xl:w-[16.666%] 2xl:w-[14.285%]')}
             >
-              <div
-                className={`${CATEGORY_STYLES.icon.containerSize} flex items-center justify-center flex-shrink-0`}
-              >
-                <img
-                  src={category.icon}
-                  alt={category.name}
-                  className={iconClasses}
-                />
-              </div>
-              <span className={textClasses}>{category.name}</span>
-            </a>
-          ))}
-        </div>
-
-        {/* Row 2 */}
-        <div className="flex w-full">
-          {row2.map((category) => (
-            <a
-              key={category.id}
-              href={category.href}
-              className={rectangleClasses}
-            >
-              <div
-                className={`${CATEGORY_STYLES.icon.containerSize} flex items-center justify-center flex-shrink-0`}
-              >
-                <img
-                  src={category.icon}
-                  alt={category.name}
-                  className={iconClasses}
-                />
-              </div>
-              <span className={textClasses}>{category.name}</span>
-            </a>
-          ))}
-        </div>
-
-        {/* Row 3 */}
-        <div className="flex w-full">
-          {row3.map((category) => (
-            <a
-              key={category.id}
-              href={category.href}
-              className={rectangleClasses}
-            >
-              <div
-                className={`${CATEGORY_STYLES.icon.containerSize} flex items-center justify-center flex-shrink-0`}
-              >
+              <div className={`${CATEGORY_STYLES.icon.containerSize} flex items-center justify-center flex-shrink-0`}>
                 <img
                   src={category.icon}
                   alt={category.name}

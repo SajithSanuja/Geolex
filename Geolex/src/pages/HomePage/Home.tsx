@@ -1,23 +1,100 @@
-import React from "react";
+import React, { useState } from "react";
 import Banner from "../../components/Banner/Banner";
 import Categories from "../../components/Categories/Categories";
 import ProductGrid from "../../components/ProductGrid/ProductGrid";
 import { BannerImages, SampleProducts } from "../../assets/assets";
 
 const Home: React.FC = () => {
+  const [showCategories, setShowCategories] = useState(false);
+
+  const toggleCategories = () => {
+    setShowCategories(!showCategories);
+  };
+
   return (
     <>
       {/* Banner Section */}
-      <div className="px-4 py-4 md:px-6 md:py-6 lg:px-0 lg:py-0">
+      <div className="px-0 py-0 md:px-6 md:py-6 lg:px-0 lg:py-0">
         <Banner
           images={BannerImages}
-          height="h-[80vh]"
+          height="h-[50vh] sm:h-[60vh] md:h-[70vh] lg:h-[80vh]"
           autoSlideInterval={8000}
         />
       </div>
 
-      {/* Categories Section */}
-      <Categories />
+      {/* Mobile Categories Toggle Button - Only visible on mobile */}
+      <div className="block md:hidden bg-white border-y border-gray-200">
+        <div className="flex items-center justify-center px-6 py-4">
+          {/* Left horizontal line */}
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-gray-400"></div>
+          
+          {/* Elegant toggle button */}
+          <button
+            onClick={toggleCategories}
+            className="mx-6 px-6 py-3 bg-[var(--category-plate-bg)] hover:bg-[var(--category-hover-bg)] border border-[var(--category-border)] hover:border-[var(--category-text-hover)] rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 ease-out font-poppins font-medium text-[var(--category-text)] hover:text-[var(--category-text-hover)] flex items-center space-x-3 group transform hover:scale-105 active:scale-95 relative overflow-hidden"
+          >
+            {/* Background animation overlay */}
+            <div className={`absolute inset-0 bg-gradient-to-r from-[var(--category-text-hover)]/10 to-transparent transition-all duration-500 ease-out ${
+              showCategories ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"
+            }`}></div>
+            
+            {/* Icon */}
+            <div className="relative z-10">
+              <svg
+                className={`w-5 h-5 transition-all duration-500 ease-out ${
+                  showCategories ? "rotate-180 text-[var(--category-text-hover)]" : "rotate-0"
+                } group-hover:text-[var(--category-text-hover)]`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2.5}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+              {/* Subtle glow effect */}
+              <div className="absolute inset-0 bg-[var(--category-text-hover)] opacity-0 group-hover:opacity-20 blur-sm rounded-full transition-opacity duration-300"></div>
+            </div>
+            
+            {/* Button text */}
+            <span className="text-sm font-medium tracking-wide relative z-10 transition-all duration-300">
+              {showCategories ? "Hide Categories" : "Show Categories"}
+            </span>
+            
+            {/* Chevron indicator */}
+            <svg
+              className={`w-4 h-4 transition-all duration-500 ease-out relative z-10 ${
+                showCategories ? "rotate-180" : "rotate-0"
+              } group-hover:text-[var(--category-text-hover)]`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+          
+          {/* Right horizontal line */}
+          <div className="flex-1 h-px bg-gradient-to-l from-transparent via-gray-300 to-gray-400"></div>
+        </div>
+      </div>
+
+      {/* Categories Section - Hidden on mobile by default, always visible on desktop */}
+      <div className={`md:block transition-all duration-400 ease-in-out origin-top ${
+        showCategories 
+          ? "opacity-100 scale-y-100 h-auto" 
+          : "opacity-0 scale-y-0 h-0 overflow-hidden"
+      }`}>
+        <Categories />
+      </div>
 
       {/* Featured Products Section */}
       <ProductGrid
