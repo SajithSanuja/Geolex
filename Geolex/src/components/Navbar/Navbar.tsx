@@ -10,6 +10,7 @@ import {
 import { Images } from "../../assets/assets";
 import CartDropdown from "../Cart/CartDropdown";
 import WishlistDropdown from "../Wishlist/WishlistDropdown";
+import Categories from "../Categories/Categories";
 import type { CartItem } from "../../data/cartData";
 import type { WishlistItem } from "../../data/wishlistData";
 
@@ -38,6 +39,8 @@ const Navbar: React.FC<NavbarProps> = ({
   const [isTabletSize, setIsTabletSize] = useState(false);
   const [isCartVisible, setIsCartVisible] = useState(false);
   const [isWishlistVisible, setIsWishlistVisible] = useState(false);
+  const [isCategoriesVisible, setIsCategoriesVisible] = useState(false);
+  const [categoriesTimeout, setCategoriesTimeout] = useState<number | null>(null);
   const [isNavbarHovered, setIsNavbarHovered] = useState(false);
 
   // Cart functionality
@@ -128,6 +131,31 @@ const Navbar: React.FC<NavbarProps> = ({
   const totalCartItems = cartItems.reduce((total, item) => total + item.quantity, 0);
   const totalWishlistItems = wishlistItems.length;
 
+  // Categories dropdown timeout handlers
+  const handleCategoriesMouseEnter = () => {
+    if (categoriesTimeout) {
+      clearTimeout(categoriesTimeout);
+      setCategoriesTimeout(null);
+    }
+    setIsCategoriesVisible(true);
+  };
+
+  const handleCategoriesMouseLeave = () => {
+    const timeout = setTimeout(() => {
+      setIsCategoriesVisible(false);
+    }, 300); // 300ms delay before hiding
+    setCategoriesTimeout(timeout);
+  };
+
+  const handleCategoriesClick = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent navigation
+    if (categoriesTimeout) {
+      clearTimeout(categoriesTimeout);
+      setCategoriesTimeout(null);
+    }
+    setIsCategoriesVisible(true);
+  };
+
   // Check if we're in tablet size range (768-1024px)
   useEffect(() => {
     const checkTabletSize = () => {
@@ -139,6 +167,15 @@ const Navbar: React.FC<NavbarProps> = ({
     window.addEventListener('resize', checkTabletSize);
     return () => window.removeEventListener('resize', checkTabletSize);
   }, []);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (categoriesTimeout) {
+        clearTimeout(categoriesTimeout);
+      }
+    };
+  }, [categoriesTimeout]);
 
   // Size configurations
   const sizeConfig = {
@@ -353,6 +390,45 @@ const Navbar: React.FC<NavbarProps> = ({
                 >
                   Home
                 </a>
+                
+                {/* Categories Dropdown */}
+                <div className="relative hidden md:block">
+                  <div
+                    className="relative"
+                    onMouseEnter={handleCategoriesMouseEnter}
+                    onMouseLeave={handleCategoriesMouseLeave}
+                  >
+                    <a
+                      href="/categories"
+                      onClick={handleCategoriesClick}
+                      className={`
+                        ${isTabletSize ? "px-1 py-1" : currentSizeConfig.padding} font-medium transition-all duration-700 whitespace-nowrap font-roboto cursor-pointer
+                        ${
+                          shouldShrink
+                            ? `${isTabletSize ? "text-xs" : currentSizeConfig.textSizeShrunken} text-white hover:text-[#13ee9e]`
+                            : `${isTabletSize ? "text-sm" : currentSizeConfig.textSize} text-white hover:text-[#13ee9e]`
+                        }
+                      `}
+                    >
+                      Categories
+                    </a>
+                  </div>
+                  
+                  {/* Categories Dropdown */}
+                  {isCategoriesVisible && (
+                    <div 
+                      className="fixed left-0 w-full z-50 shadow-2xl -mt-4"
+                      onMouseEnter={handleCategoriesMouseEnter}
+                      onMouseLeave={handleCategoriesMouseLeave}
+                      style={{
+                        top: shouldShrink ? '48px' : '72px', // Position directly at navbar bottom
+                      }}
+                    >
+                      <Categories />
+                    </div>
+                  )}
+                </div>
+                
                 <a
                   href="/about"
                   className={`
