@@ -34,7 +34,26 @@ const Navbar: React.FC<NavbarProps> = ({
   const [isTabletSize, setIsTabletSize] = useState(false);
   const [isCartVisible, setIsCartVisible] = useState(false);
   const [isWishlistVisible, setIsWishlistVisible] = useState(false);
-  const [cartItems, setCartItems] = useState<CartItem[]>(sampleCartItems);
+  
+  // Initialize cart items from localStorage or sample data
+  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+    try {
+      const savedCart = localStorage.getItem('geolex-cart');
+      return savedCart ? JSON.parse(savedCart) : sampleCartItems;
+    } catch (error) {
+      console.error('Error loading cart from localStorage:', error);
+      return sampleCartItems;
+    }
+  });
+
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('geolex-cart', JSON.stringify(cartItems));
+    } catch (error) {
+      console.error('Error saving cart to localStorage:', error);
+    }
+  }, [cartItems]);
 
   // Cart functionality
   const handleUpdateQuantity = (id: string, quantity: number) => {
