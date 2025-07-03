@@ -267,9 +267,12 @@ const Navbar: React.FC<NavbarProps> = ({
             ? "bg-transparent"
             : shouldShrink
             ? "bg-transparent"
-            : "bg-[#151b25] shadow-md"
+            : "shadow-md"
         }
       `}
+      style={{
+        backgroundColor: shouldBeTransparent ? 'transparent' : shouldShrink ? 'transparent' : '#000308'
+      }}
       onMouseEnter={() => setIsNavbarHovered(true)}
       onMouseLeave={() => setIsNavbarHovered(false)}
     >
@@ -280,15 +283,22 @@ const Navbar: React.FC<NavbarProps> = ({
             shouldBeTransparent
               ? "w-full bg-transparent" // Full transparent when shrinking disabled and not hovered
               : shouldShrink
-              ? "w-1/2 bg-[#151b25]/20 backdrop-blur-md rounded-b-2xl mx-auto shadow-lg border border-white/10"
-              : "w-full bg-[#151b25]"
-          }
-          ${
-            !enableShrinking && isScrolled && isNavbarHovered
-              ? "bg-[#151b25]/95 backdrop-blur-md shadow-lg"
-              : ""
+              ? "w-1/2 backdrop-blur-md rounded-b-2xl mx-auto shadow-lg border border-white/10"
+              : "w-full"
           }
         `}
+        style={{
+          backgroundColor: shouldBeTransparent 
+            ? 'transparent' 
+            : shouldShrink 
+            ? 'rgba(0, 3, 8, 0.2)'
+            : '#000308',
+          ...((!enableShrinking && isScrolled && isNavbarHovered) && {
+            backgroundColor: 'rgba(0, 3, 8, 0.95)',
+            backdropFilter: 'blur(12px)',
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
+          })
+        }}
       >
         <div className={`flex items-center ${currentSizeConfig.height}`}>
           {/* Left Section - Logo */}
@@ -531,10 +541,17 @@ const Navbar: React.FC<NavbarProps> = ({
                 shouldBeTransparent
                   ? "bg-transparent"
                   : shouldShrink
-                  ? "bg-[#151b25]/20 backdrop-blur-sm border-t border-white/10"
+                  ? "backdrop-blur-sm border-t border-white/10"
                   : "border-t border-gray-600"
               }
             `}
+            style={{
+              backgroundColor: shouldBeTransparent 
+                ? 'transparent' 
+                : shouldShrink 
+                ? 'rgba(0, 3, 8, 0.2)'
+                : '#000308'
+            }}
           >
             <div className="px-2 pt-2 pb-3 space-y-1">
               {/* Mobile Search */}

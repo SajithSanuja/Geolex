@@ -52,7 +52,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
   const displayProducts = maxItems ? products.slice(0, maxItems) : products;
 
   return (
-    <section className="w-full py-4 sm:py-6 lg:py-8 bg-white">
+    <section className="w-full py-4 sm:py-6 lg:py-8">
       {/* Responsive Container - Adjusted padding for different screen sizes */}
       <div className="w-full px-4 sm:px-6 md:px-8 lg:px-[6%] xl:px-[8%]">
         {/* Section Title - Responsive */}
