@@ -1,5 +1,5 @@
 import React from "react";
-import { TrashIcon, PlusIcon, MinusIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
+import { TrashIcon, PlusIcon, MinusIcon, ShoppingCartIcon, HeartIcon } from "@heroicons/react/24/outline";
 import "./CartDropdown.css";
 
 interface CartItem {
@@ -15,6 +15,7 @@ interface CartDropdownProps {
   items: CartItem[];
   onUpdateQuantity: (id: string, quantity: number) => void;
   onRemoveItem: (id: string) => void;
+  onMoveToWishlist: (item: CartItem) => void;
   onClose: () => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
@@ -25,6 +26,7 @@ const CartDropdown: React.FC<CartDropdownProps> = ({
   items,
   onUpdateQuantity,
   onRemoveItem,
+  onMoveToWishlist,
   onClose,
   onMouseEnter,
   onMouseLeave,
@@ -35,7 +37,7 @@ const CartDropdown: React.FC<CartDropdownProps> = ({
 
   return (
     <div 
-      className="absolute right-0 top-full mt-2 w-96 bg-[#151b25] border border-white/10 rounded-lg shadow-2xl backdrop-blur-md z-50 transform transition-all duration-300 ease-in-out max-h-[calc(100vh-120px)] flex flex-col"
+      className="absolute right-0 top-full mt-2 w-[420px] bg-[#151b25] border border-white/10 rounded-lg shadow-2xl backdrop-blur-md z-50 transform transition-all duration-300 ease-in-out max-h-[calc(100vh-120px)] flex flex-col"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
@@ -86,7 +88,7 @@ const CartDropdown: React.FC<CartDropdownProps> = ({
                       </p>
                     </div>
 
-                    {/* Quantity Controls */}
+                    {/* Quantity Controls and Actions */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3 bg-white/5 rounded-lg px-3 py-2">
                         <button
@@ -106,13 +108,26 @@ const CartDropdown: React.FC<CartDropdownProps> = ({
                         </button>
                       </div>
 
-                      {/* Remove Button */}
-                      <button
-                        onClick={() => onRemoveItem(item.id)}
-                        className="p-2 text-gray-400 hover:text-red-400 transition-colors duration-200 hover:bg-red-400/10 rounded-lg"
-                      >
-                        <TrashIcon className="h-4 w-4" />
-                      </button>
+                      {/* Action Buttons */}
+                      <div className="flex items-center space-x-2">
+                        {/* Move to Wishlist Button */}
+                        <button
+                          onClick={() => onMoveToWishlist(item)}
+                          className="p-2 text-gray-400 hover:text-red-400 transition-colors duration-200 hover:bg-red-400/10 rounded-lg"
+                          title="Move to wishlist"
+                        >
+                          <HeartIcon className="h-4 w-4" />
+                        </button>
+
+                        {/* Remove Button */}
+                        <button
+                          onClick={() => onRemoveItem(item.id)}
+                          className="p-2 text-gray-400 hover:text-red-500 transition-colors duration-200 hover:bg-red-500/10 rounded-lg"
+                          title="Remove item"
+                        >
+                          <TrashIcon className="h-4 w-4" />
+                        </button>
+                      </div>
                     </div>
 
                     {/* Total Price for this item */}

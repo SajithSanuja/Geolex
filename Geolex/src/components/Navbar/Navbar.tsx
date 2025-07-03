@@ -50,6 +50,31 @@ const Navbar: React.FC<NavbarProps> = ({
     setCartItems(prev => prev.filter(item => item.id !== id));
   };
 
+  // Move item from cart to wishlist
+  const handleMoveToWishlist = (cartItem: CartItem) => {
+    // Add to wishlist
+    const wishlistItem: WishlistItem = {
+      id: cartItem.id,
+      name: cartItem.name,
+      image: cartItem.image,
+      price: cartItem.price,
+      category: "Electronics", // Default category since cart items don't have category
+      inStock: true, // Assume in stock
+    };
+
+    // Check if item already exists in wishlist
+    setWishlistItems(prev => {
+      const existingItem = prev.find(item => item.id === wishlistItem.id);
+      if (!existingItem) {
+        return [...prev, wishlistItem];
+      }
+      return prev; // Don't add duplicate
+    });
+
+    // Remove from cart
+    setCartItems(prev => prev.filter(item => item.id !== cartItem.id));
+  };
+
   // Wishlist functionality
   const handleAddToCartFromWishlist = (wishlistItem: WishlistItem) => {
     // Add to cart
@@ -428,6 +453,7 @@ const Navbar: React.FC<NavbarProps> = ({
                   items={cartItems}
                   onUpdateQuantity={handleUpdateQuantity}
                   onRemoveItem={handleRemoveItem}
+                  onMoveToWishlist={handleMoveToWishlist}
                   onClose={() => setIsCartVisible(false)}
                   onMouseEnter={() => setIsCartVisible(true)}
                   onMouseLeave={() => setIsCartVisible(false)}
