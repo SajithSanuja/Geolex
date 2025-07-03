@@ -71,7 +71,8 @@ const Navbar: React.FC<NavbarProps> = ({
       return prev; // Don't add duplicate
     });
 
-    // Remove from cart
+    // Remove entire item from cart (regardless of quantity)
+    // This is intentional - when moving to wishlist, we move the whole item
     setCartItems(prev => prev.filter(item => item.id !== cartItem.id));
   };
 
@@ -106,6 +107,7 @@ const Navbar: React.FC<NavbarProps> = ({
     setWishlistItems(prev => prev.filter(item => item.id !== id));
   };
 
+  // Calculate totals - these will update whenever the state changes
   const totalCartItems = cartItems.reduce((total, item) => total + item.quantity, 0);
   const totalWishlistItems = wishlistItems.length;
 
