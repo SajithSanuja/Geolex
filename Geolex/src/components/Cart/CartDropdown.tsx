@@ -49,7 +49,7 @@ const CartDropdown: React.FC<CartDropdownProps> = ({
       
       {/* Header */}
       <div className="px-4 py-3 border-b border-white/10 flex-shrink-0">
-        <h3 className="text-lg font-semibold text-white font-roboto">Shopping Cart</h3>
+        <h3 className="text-lg font-semibold text-white">Shopping Cart</h3>
       </div>
 
       {/* Cart Items */}
@@ -59,8 +59,8 @@ const CartDropdown: React.FC<CartDropdownProps> = ({
             <div className="w-16 h-16 mx-auto mb-4 bg-white/5 rounded-full flex items-center justify-center">
               <ShoppingCartIcon className="w-8 h-8 text-gray-400" />
             </div>
-            <p className="text-gray-400 font-roboto text-lg">Your cart is empty</p>
-            <p className="text-gray-500 font-roboto text-sm mt-2">Add some products to get started!</p>
+            <p className="text-gray-400 text-lg">Your cart is empty</p>
+            <p className="text-gray-500 text-sm mt-2">Add some products to get started!</p>
           </div>
         ) : (
           <div className="py-2">
@@ -80,7 +80,7 @@ const CartDropdown: React.FC<CartDropdownProps> = ({
                   <div className="flex-1 space-y-3">
                     {/* Product Name and Price */}
                     <div>
-                      <h4 className="text-sm font-medium text-white font-roboto leading-tight">
+                      <h4 className="text-sm font-medium text-white leading-tight">
                         {item.name}
                       </h4>
                       <p className="text-sm text-[#13ee9e] font-semibold mt-1">

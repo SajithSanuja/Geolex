@@ -419,7 +419,7 @@ const Navbar: React.FC<NavbarProps> = ({
                 <a
                   href="/"
                   className={`
-                    ${isTabletSize ? "px-2 py-2" : currentSizeConfig.padding} font-medium transition-all duration-700 whitespace-nowrap font-roboto flex items-center
+                    ${isTabletSize ? "px-2 py-2" : currentSizeConfig.padding} font-medium transition-all duration-700 whitespace-nowrap flex items-center
                     ${
                       shouldShrink
                         ? `${isTabletSize ? "text-sm" : currentSizeConfig.textSizeShrunken} text-white hover:text-[#13ee9e]`
@@ -441,7 +441,7 @@ const Navbar: React.FC<NavbarProps> = ({
                       href="/categories"
                       onClick={handleCategoriesClick}
                       className={`
-                        ${isTabletSize ? "px-2 py-2" : currentSizeConfig.padding} font-medium transition-all duration-700 whitespace-nowrap font-roboto cursor-pointer flex items-center
+                        ${isTabletSize ? "px-2 py-2" : currentSizeConfig.padding} font-medium transition-all duration-700 whitespace-nowrap cursor-pointer flex items-center
                         ${
                           shouldShrink
                             ? `${isTabletSize ? "text-sm" : currentSizeConfig.textSizeShrunken} text-white hover:text-[#13ee9e]`

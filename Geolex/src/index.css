@@ -1,5 +1,5 @@
 /* Google Fonts Import - MUST BE FIRST */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap');
 
 /* Tailwind CSS Import */
 @import "tailwindcss";
@@ -7,6 +7,7 @@
 /* CSS Variables for Tailwind v4 */
 :root {
   /* Font Family Variables */
+  --font-red-hat-display: 'Red Hat Display', sans-serif;
   --font-roboto: 'Roboto', sans-serif;
   --font-poppins: 'Poppins', sans-serif;
   --font-inter: 'Inter', sans-serif;
@@ -55,6 +56,7 @@
 
 /* Tailwind Theme Extension */
 @theme {
+  --font-family-red-hat-display: var(--font-red-hat-display);
   --font-family-roboto: var(--font-roboto);
   --font-family-poppins: var(--font-poppins);
   --font-family-inter: var(--font-inter);
@@ -88,6 +90,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  font-family: 'Red Hat Display', sans-serif;
   /* Add scroll speed enhancement */
   overscroll-behavior: none;
 }
@@ -95,6 +98,7 @@ body {
 /* Add to index.css - Hardware acceleration and smooth scrolling */
 * {
   scroll-behavior: smooth;
+  font-family: 'Red Hat Display', sans-serif;
 }
 
 html {
