@@ -38,6 +38,7 @@ const Navbar: React.FC<NavbarProps> = ({
   const [isTabletSize, setIsTabletSize] = useState(false);
   const [isCartVisible, setIsCartVisible] = useState(false);
   const [isWishlistVisible, setIsWishlistVisible] = useState(false);
+  const [isNavbarHovered, setIsNavbarHovered] = useState(false);
 
   // Cart functionality
   const handleUpdateQuantity = (id: string, quantity: number) => {
@@ -255,12 +256,12 @@ const Navbar: React.FC<NavbarProps> = ({
   }, [shrinkThreshold]);
 
   const shouldShrink = enableShrinking && isScrolled;
-  const shouldBeTransparent = !enableShrinking && isScrolled; // Full transparent when shrinking disabled
+  const shouldBeTransparent = !enableShrinking && isScrolled && !isNavbarHovered; // Full transparent when shrinking disabled and not hovered
 
   return (
     <nav
       className={`
-        w-full sticky top-0 z-50 navbar-container transition-all duration-700 ease-in-out flex justify-center
+        w-full sticky top-0 z-50 navbar-container transition-all duration-300 ease-in-out flex justify-center
         ${
           shouldBeTransparent
             ? "bg-transparent"
@@ -269,16 +270,23 @@ const Navbar: React.FC<NavbarProps> = ({
             : "bg-[#151b25] shadow-md"
         }
       `}
+      onMouseEnter={() => setIsNavbarHovered(true)}
+      onMouseLeave={() => setIsNavbarHovered(false)}
     >
       <div
         className={`
-          px-4 sm:px-6 lg:px-8 transition-all duration-700 ease-in-out
+          px-4 sm:px-6 lg:px-8 transition-all duration-300 ease-in-out
           ${
             shouldBeTransparent
-              ? "w-full bg-transparent" // Full transparent when shrinking disabled
+              ? "w-full bg-transparent" // Full transparent when shrinking disabled and not hovered
               : shouldShrink
               ? "w-1/2 bg-[#151b25]/20 backdrop-blur-md rounded-b-2xl mx-auto shadow-lg border border-white/10"
-              : "w-full"
+              : "w-full bg-[#151b25]"
+          }
+          ${
+            !enableShrinking && isScrolled && isNavbarHovered
+              ? "bg-[#151b25]/95 backdrop-blur-md shadow-lg"
+              : ""
           }
         `}
       >
