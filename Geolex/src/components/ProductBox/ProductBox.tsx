@@ -123,7 +123,7 @@ const ProductBox: React.FC<ProductBoxProps> = ({
       </div>
 
       {/* Product Info Container */}
-      <div className="p-4 flex flex-col flex-grow">
+      <div className="p-4 flex flex-col flex-grow pb-0">
         {/* Product Name */}
         <h3 className="font-medium text-gray-900 mb-2 text-sm leading-tight line-clamp-2">
           {name}
