@@ -9,7 +9,9 @@ import {
 } from "@heroicons/react/24/outline";
 import { Images } from "../../assets/assets";
 import CartDropdown from "../Cart/CartDropdown";
+import WishlistDropdown from "../Wishlist/WishlistDropdown";
 import { sampleCartItems, type CartItem } from "../../data/cartData";
+import { sampleWishlistItems, type WishlistItem } from "../../data/wishlistData";
 
 interface NavbarProps {
   enableShrinking?: boolean;
@@ -27,7 +29,9 @@ const Navbar: React.FC<NavbarProps> = ({
   const [isScrolled, setIsScrolled] = useState(false);
   const [isTabletSize, setIsTabletSize] = useState(false);
   const [isCartVisible, setIsCartVisible] = useState(false);
+  const [isWishlistVisible, setIsWishlistVisible] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>(sampleCartItems);
+  const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>(sampleWishlistItems);
 
   // Cart functionality
   const handleUpdateQuantity = (id: string, quantity: number) => {
@@ -46,7 +50,39 @@ const Navbar: React.FC<NavbarProps> = ({
     setCartItems(prev => prev.filter(item => item.id !== id));
   };
 
+  // Wishlist functionality
+  const handleAddToCartFromWishlist = (wishlistItem: WishlistItem) => {
+    // Add to cart
+    const cartItem: CartItem = {
+      id: wishlistItem.id,
+      name: wishlistItem.name,
+      image: wishlistItem.image,
+      price: wishlistItem.price,
+      quantity: 1,
+    };
+    
+    setCartItems(prev => {
+      const existingItem = prev.find(item => item.id === cartItem.id);
+      if (existingItem) {
+        return prev.map(item =>
+          item.id === cartItem.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      }
+      return [...prev, cartItem];
+    });
+
+    // Remove from wishlist after adding to cart
+    setWishlistItems(prev => prev.filter(item => item.id !== wishlistItem.id));
+  };
+
+  const handleRemoveFromWishlist = (id: string) => {
+    setWishlistItems(prev => prev.filter(item => item.id !== id));
+  };
+
   const totalCartItems = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const totalWishlistItems = wishlistItems.length;
 
   // Check if we're in tablet size range (768-1024px)
   useEffect(() => {
@@ -320,25 +356,43 @@ const Navbar: React.FC<NavbarProps> = ({
             `}
             >
               {/* Wishlist Icon */}
-              <button
-                className={`
-                  p-2 transition-all duration-700 relative
-                  text-white hover:text-[#13ee9e]
-                `}
+              <div 
+                className="relative"
+                onMouseEnter={() => setIsWishlistVisible(true)}
+                onMouseLeave={() => setIsWishlistVisible(false)}
               >
-                <HeartIcon
+                <button
                   className={`
-                  transition-all duration-700 ease-in-out
-                  ${isTabletSize 
-                    ? (shouldShrink ? "h-4 w-4" : "h-5 w-5") 
-                    : (shouldShrink ? currentSizeConfig.iconSizeShrunken : currentSizeConfig.iconSize)
-                  }
-                `}
+                    p-2 transition-all duration-700 relative
+                    text-white hover:text-[#13ee9e]
+                  `}
+                >
+                  <HeartIcon
+                    className={`
+                    transition-all duration-700 ease-in-out
+                    ${isTabletSize 
+                      ? (shouldShrink ? "h-4 w-4" : "h-5 w-5") 
+                      : (shouldShrink ? currentSizeConfig.iconSizeShrunken : currentSizeConfig.iconSize)
+                    }
+                  `}
+                  />
+                  {totalWishlistItems > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                      {totalWishlistItems}
+                    </span>
+                  )}
+                </button>
+                
+                {/* Wishlist Dropdown */}
+                <WishlistDropdown
+                  isVisible={isWishlistVisible}
+                  items={wishlistItems}
+                  onAddToCart={handleAddToCartFromWishlist}
+                  onRemoveItem={handleRemoveFromWishlist}
+                  onMouseEnter={() => setIsWishlistVisible(true)}
+                  onMouseLeave={() => setIsWishlistVisible(false)}
                 />
-                <span className="absolute -top-1 -right-1 bg-[#13ee9e] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
-                  3
-                </span>
-              </button>
+              </div>
 
               {/* Cart Icon */}
               <div 
