@@ -10,7 +10,7 @@ import {
 import { Images } from "../../assets/assets";
 import CartDropdown from "../Cart/CartDropdown";
 import WishlistDropdown from "../Wishlist/WishlistDropdown";
-import { sampleCartItems, type CartItem } from "../../data/cartData";
+import type { CartItem } from "../../data/cartData";
 import type { WishlistItem } from "../../data/wishlistData";
 
 interface NavbarProps {
@@ -19,6 +19,8 @@ interface NavbarProps {
   size?: "xs" | "sm" | "md" | "lg" | "xl";
   wishlistItems?: WishlistItem[];
   onWishlistChange?: (items: WishlistItem[]) => void;
+  cartItems?: CartItem[];
+  onCartChange?: (items: CartItem[]) => void;
 }
 
 const Navbar: React.FC<NavbarProps> = ({
@@ -27,6 +29,8 @@ const Navbar: React.FC<NavbarProps> = ({
   size = "md",
   wishlistItems = [],
   onWishlistChange,
+  cartItems = [],
+  onCartChange,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -34,42 +38,25 @@ const Navbar: React.FC<NavbarProps> = ({
   const [isTabletSize, setIsTabletSize] = useState(false);
   const [isCartVisible, setIsCartVisible] = useState(false);
   const [isWishlistVisible, setIsWishlistVisible] = useState(false);
-  
-  // Initialize cart items from localStorage or sample data
-  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
-    try {
-      const savedCart = localStorage.getItem('geolex-cart');
-      return savedCart ? JSON.parse(savedCart) : sampleCartItems;
-    } catch (error) {
-      console.error('Error loading cart from localStorage:', error);
-      return sampleCartItems;
-    }
-  });
-
-  // Save cart to localStorage whenever it changes
-  useEffect(() => {
-    try {
-      localStorage.setItem('geolex-cart', JSON.stringify(cartItems));
-    } catch (error) {
-      console.error('Error saving cart to localStorage:', error);
-    }
-  }, [cartItems]);
 
   // Cart functionality
   const handleUpdateQuantity = (id: string, quantity: number) => {
+    if (!onCartChange) return;
+    
     if (quantity === 0) {
       handleRemoveItem(id);
       return;
     }
-    setCartItems(prev => 
-      prev.map(item => 
-        item.id === id ? { ...item, quantity } : item
-      )
+    
+    const updatedItems = cartItems.map(item => 
+      item.id === id ? { ...item, quantity } : item
     );
+    onCartChange(updatedItems);
   };
 
   const handleRemoveItem = (id: string) => {
-    setCartItems(prev => prev.filter(item => item.id !== id));
+    if (!onCartChange) return;
+    onCartChange(cartItems.filter(item => item.id !== id));
   };
 
   // Move item from cart to wishlist
@@ -94,11 +81,15 @@ const Navbar: React.FC<NavbarProps> = ({
 
     // Remove entire item from cart (regardless of quantity)
     // This is intentional - when moving to wishlist, we move the whole item
-    setCartItems(prev => prev.filter(item => item.id !== cartItem.id));
+    if (onCartChange) {
+      onCartChange(cartItems.filter(item => item.id !== cartItem.id));
+    }
   };
 
   // Wishlist functionality
   const handleAddToCartFromWishlist = (wishlistItem: WishlistItem) => {
+    if (!onCartChange) return;
+    
     // Add to cart
     const cartItem: CartItem = {
       id: wishlistItem.id,
@@ -108,17 +99,17 @@ const Navbar: React.FC<NavbarProps> = ({
       quantity: 1,
     };
     
-    setCartItems(prev => {
-      const existingItem = prev.find(item => item.id === cartItem.id);
-      if (existingItem) {
-        return prev.map(item =>
-          item.id === cartItem.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      }
-      return [...prev, cartItem];
-    });
+    const existingItem = cartItems.find(item => item.id === cartItem.id);
+    if (existingItem) {
+      const updatedItems = cartItems.map(item =>
+        item.id === cartItem.id
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      );
+      onCartChange(updatedItems);
+    } else {
+      onCartChange([...cartItems, cartItem]);
+    }
 
     // Remove from wishlist after adding to cart
     if (onWishlistChange) {

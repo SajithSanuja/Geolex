@@ -29,6 +29,15 @@ interface ProductGridProps {
     category: string;
     inStock?: boolean;
   }) => void;
+  onAddToCart?: (productId: string, productData: {
+    id: string;
+    name: string;
+    image: string;
+    price: number;
+    originalPrice?: number;
+    category: string;
+    inStock?: boolean;
+  }) => void;
 }
 
 const ProductGrid: React.FC<ProductGridProps> = ({
@@ -38,6 +47,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
   columns,
   wishlistItems = [],
   onToggleWishlist,
+  onAddToCart,
 }) => {
   const displayProducts = maxItems ? products.slice(0, maxItems) : products;
 
@@ -69,6 +79,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
               reviewCount={product.reviewCount}
               isInWishlist={wishlistItems.includes(product.id)}
               onToggleWishlist={onToggleWishlist}
+              onAddToCart={onAddToCart}
             />
           ))}
         </div>

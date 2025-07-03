@@ -2,6 +2,7 @@ import React from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as faHeartThin } from '@fortawesome/free-regular-svg-icons';
 import { faHeart as faHeartSolid } from '@fortawesome/free-solid-svg-icons';
+import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 
 interface ProductBoxProps {
   id: string;
@@ -24,6 +25,15 @@ interface ProductBoxProps {
     category: string;
     inStock?: boolean;
   }) => void;
+  onAddToCart?: (productId: string, productData: {
+    id: string;
+    name: string;
+    image: string;
+    price: number;
+    originalPrice?: number;
+    category: string;
+    inStock?: boolean;
+  }) => void;
 }
 
 // Add performance optimizations to ProductBox
@@ -37,9 +47,10 @@ const ProductBox: React.FC<ProductBoxProps> = ({
   inStock = true,
   discount,
   rating,
-  reviewCount,
+  reviewCount: _reviewCount, // Rename to indicate it's intentionally unused
   isInWishlist = false,
   onToggleWishlist,
+  onAddToCart,
 }) => {
   const hasDiscount = originalPrice && originalPrice > price;
   const discountPercentage = hasDiscount
@@ -49,6 +60,20 @@ const ProductBox: React.FC<ProductBoxProps> = ({
   const handleWishlistToggle = () => {
     if (onToggleWishlist) {
       onToggleWishlist(id, {
+        id,
+        name,
+        image,
+        price,
+        originalPrice,
+        category,
+        inStock,
+      });
+    }
+  };
+
+  const handleAddToCart = () => {
+    if (onAddToCart && inStock) {
+      onAddToCart(id, {
         id,
         name,
         image,
@@ -103,6 +128,24 @@ const ProductBox: React.FC<ProductBoxProps> = ({
               }}
             />
           </button>
+
+          {/* Responsive Add to Cart Icon - Slides in from right on hover (positioned below wishlist) */}
+          {inStock && (
+            <button 
+              className="absolute top-10 sm:top-12 md:top-14 right-1 sm:right-1.5 md:right-2 z-20 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all duration-300 ease-out transform translate-x-full opacity-0 group-hover:translate-x-0 group-hover:opacity-100 focus:outline-none focus:ring-0 focus:border-none active:outline-none group/cart-button bg-[#13ee9e]/90 hover:bg-[#13ee9e] shadow-lg backdrop-blur-sm border border-[#13ee9e]/30"
+              onClick={handleAddToCart}
+              style={{ 
+                outline: 'none',
+                boxShadow: 'none'
+              }}
+              title="Add to Cart"
+            >
+              <FontAwesomeIcon
+                icon={faShoppingCart}
+                className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 transition-all duration-200 text-white group-hover/cart-button:text-slate-900"
+              />
+            </button>
+          )}
 
           {/* Responsive Discount Badge */}
           {discountPercentage && (

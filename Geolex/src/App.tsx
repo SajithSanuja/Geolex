@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Navbar from "./components/Navbar/Navbar";
 import Home from "./pages/HomePage/Home";
 import type { WishlistItem } from "./data/wishlistData";
+import type { CartItem } from "./data/cartData";
 import "./App.css";
 
 function App() {
@@ -16,6 +17,17 @@ function App() {
     }
   });
 
+  // Initialize cart from localStorage or empty array
+  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+    try {
+      const savedCart = localStorage.getItem('geolex-cart-app');
+      return savedCart ? JSON.parse(savedCart) : [];
+    } catch (error) {
+      console.error('Error loading cart from localStorage:', error);
+      return [];
+    }
+  });
+
   // Save wishlist to localStorage whenever it changes
   useEffect(() => {
     try {
@@ -25,8 +37,21 @@ function App() {
     }
   }, [wishlistItems]);
 
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('geolex-cart-app', JSON.stringify(cartItems));
+    } catch (error) {
+      console.error('Error saving cart to localStorage:', error);
+    }
+  }, [cartItems]);
+
   const handleWishlistChange = (items: WishlistItem[]) => {
     setWishlistItems(items);
+  };
+
+  const handleCartChange = (items: CartItem[]) => {
+    setCartItems(items);
   };
 
   return (
@@ -36,10 +61,14 @@ function App() {
         size="sm" 
         wishlistItems={wishlistItems}
         onWishlistChange={handleWishlistChange}
+        cartItems={cartItems}
+        onCartChange={handleCartChange}
       />
       <Home 
         wishlistItems={wishlistItems}
         onWishlistChange={handleWishlistChange}
+        cartItems={cartItems}
+        onCartChange={handleCartChange}
       />
     </div>
   );

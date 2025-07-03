@@ -4,13 +4,21 @@ import Categories from "../../components/Categories/Categories";
 import ProductGrid from "../../components/ProductGrid/ProductGrid";
 import { BannerImages, SampleProducts } from "../../assets/assets";
 import type { WishlistItem } from "../../data/wishlistData";
+import type { CartItem } from "../../data/cartData";
 
 interface HomeProps {
   wishlistItems: WishlistItem[];
   onWishlistChange: (items: WishlistItem[]) => void;
+  cartItems?: CartItem[];
+  onCartChange?: (items: CartItem[]) => void;
 }
 
-const Home: React.FC<HomeProps> = ({ wishlistItems, onWishlistChange }) => {
+const Home: React.FC<HomeProps> = ({ 
+  wishlistItems, 
+  onWishlistChange, 
+  cartItems = [], 
+  onCartChange 
+}) => {
   const [showCategories, setShowCategories] = useState(false);
 
   const toggleCategories = () => {
@@ -43,6 +51,40 @@ const Home: React.FC<HomeProps> = ({ wishlistItems, onWishlistChange }) => {
         inStock: productData.inStock,
       };
       onWishlistChange([...wishlistItems, newWishlistItem]);
+    }
+  };
+
+  const handleAddToCart = (productId: string, productData: {
+    id: string;
+    name: string;
+    image: string;
+    price: number;
+    originalPrice?: number;
+    category: string;
+    inStock?: boolean;
+  }) => {
+    if (!onCartChange || !productData.inStock) return;
+
+    const existingItemIndex = cartItems.findIndex(item => item.id === productId);
+    
+    if (existingItemIndex >= 0) {
+      // Item exists, increase quantity
+      const updatedCartItems = cartItems.map(item =>
+        item.id === productId
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      );
+      onCartChange(updatedCartItems);
+    } else {
+      // Add new item to cart
+      const newCartItem: CartItem = {
+        id: productData.id,
+        name: productData.name,
+        image: productData.image,
+        price: productData.price,
+        quantity: 1,
+      };
+      onCartChange([...cartItems, newCartItem]);
     }
   };
 
@@ -139,6 +181,7 @@ const Home: React.FC<HomeProps> = ({ wishlistItems, onWishlistChange }) => {
         maxItems={8}
         wishlistItems={wishlistItems.map(item => item.id)}
         onToggleWishlist={handleToggleWishlist}
+        onAddToCart={handleAddToCart}
       />
 
       {/* Welcome Section */}
