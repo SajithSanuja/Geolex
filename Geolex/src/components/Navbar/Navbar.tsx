@@ -42,6 +42,7 @@ const Navbar: React.FC<NavbarProps> = ({
   const [isCategoriesVisible, setIsCategoriesVisible] = useState(false);
   const [categoriesTimeout, setCategoriesTimeout] = useState<number | null>(null);
   const [isNavbarHovered, setIsNavbarHovered] = useState(false);
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
 
   // Cart functionality
   const handleUpdateQuantity = (id: string, quantity: number) => {
@@ -156,11 +157,11 @@ const Navbar: React.FC<NavbarProps> = ({
     setIsCategoriesVisible(true);
   };
 
-  // Check if we're in tablet size range (768-1024px)
+  // Check if we're in different size ranges
   useEffect(() => {
     const checkTabletSize = () => {
       const width = window.innerWidth;
-      setIsTabletSize(width >= 768 && width <= 1024);
+      setIsTabletSize(width >= 770 && width <= 1440);
     };
 
     checkTabletSize();
@@ -176,6 +177,44 @@ const Navbar: React.FC<NavbarProps> = ({
       }
     };
   }, [categoriesTimeout]);
+
+  // Close search dropdown when clicking outside or pressing escape
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isSearchVisible && !(event.target as Element).closest('.search-dropdown')) {
+        setIsSearchVisible(false);
+      }
+    };
+
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isSearchVisible) {
+        setIsSearchVisible(false);
+      }
+    };
+
+    if (isSearchVisible) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleEscapeKey);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [isSearchVisible]);
+
+  // Close search dropdown when mobile menu opens and vice versa
+  useEffect(() => {
+    if (isMenuOpen) {
+      setIsSearchVisible(false);
+    }
+  }, [isMenuOpen]);
+
+  useEffect(() => {
+    if (isSearchVisible) {
+      setIsMenuOpen(false);
+    }
+  }, [isSearchVisible]);
 
   // Size configurations
   const sizeConfig = {
@@ -337,9 +376,9 @@ const Navbar: React.FC<NavbarProps> = ({
           })
         }}
       >
-        <div className={`flex items-center ${currentSizeConfig.height}`}>
+        <div className={`flex items-center justify-between ${currentSizeConfig.height}`}>
           {/* Left Section - Logo */}
-          <div className="flex-1 flex justify-start">
+          <div className="flex items-center justify-start flex-shrink-0">
             <div className="flex-shrink-0 flex items-center">
               <img
                 src={Images.NavbarLogo}
@@ -356,13 +395,13 @@ const Navbar: React.FC<NavbarProps> = ({
             </div>
           </div>
 
-          {/* Center Section - Navigation and Search Bar */}
-          <div className="hidden md:flex flex-1 justify-center items-center">
+          {/* Center Section - Navigation and Search */}
+          <div className="hidden md:flex items-center justify-center flex-shrink-0">
             <div
               className={`
-              flex items-center transition-all duration-700 ease-in-out
+              flex items-center justify-center transition-all duration-700 ease-in-out
               ${isTabletSize 
-                ? (shouldShrink ? "space-x-1" : "space-x-2") 
+                ? (shouldShrink ? "space-x-2" : "space-x-3") 
                 : (shouldShrink ? currentSizeConfig.spacingShrunken : currentSizeConfig.spacing)
               }
             `}
@@ -370,9 +409,9 @@ const Navbar: React.FC<NavbarProps> = ({
               {/* Navigation Links */}
               <div
                 className={`
-                flex items-center transition-all duration-700 ease-in-out
+                flex items-center justify-center transition-all duration-700 ease-in-out
                 ${isTabletSize 
-                  ? (shouldShrink ? "space-x-1" : "space-x-2") 
+                  ? (shouldShrink ? "space-x-2" : "space-x-3") 
                   : (shouldShrink ? currentSizeConfig.spacingShrunken : currentSizeConfig.spacing)
                 }
               `}
@@ -380,11 +419,11 @@ const Navbar: React.FC<NavbarProps> = ({
                 <a
                   href="/"
                   className={`
-                    ${isTabletSize ? "px-1 py-1" : currentSizeConfig.padding} font-medium transition-all duration-700 whitespace-nowrap font-roboto
+                    ${isTabletSize ? "px-2 py-2" : currentSizeConfig.padding} font-medium transition-all duration-700 whitespace-nowrap font-roboto flex items-center
                     ${
                       shouldShrink
-                        ? `${isTabletSize ? "text-xs" : currentSizeConfig.textSizeShrunken} text-white hover:text-[#13ee9e]`
-                        : `${isTabletSize ? "text-sm" : currentSizeConfig.textSize} text-white hover:text-[#13ee9e]`
+                        ? `${isTabletSize ? "text-sm" : currentSizeConfig.textSizeShrunken} text-white hover:text-[#13ee9e]`
+                        : `${isTabletSize ? "text-base" : currentSizeConfig.textSize} text-white hover:text-[#13ee9e]`
                     }
                   `}
                 >
@@ -392,9 +431,9 @@ const Navbar: React.FC<NavbarProps> = ({
                 </a>
                 
                 {/* Categories Dropdown */}
-                <div className="relative hidden md:block">
+                <div className="relative flex items-center">
                   <div
-                    className="relative"
+                    className="relative flex items-center"
                     onMouseEnter={handleCategoriesMouseEnter}
                     onMouseLeave={handleCategoriesMouseLeave}
                   >
@@ -402,11 +441,11 @@ const Navbar: React.FC<NavbarProps> = ({
                       href="/categories"
                       onClick={handleCategoriesClick}
                       className={`
-                        ${isTabletSize ? "px-1 py-1" : currentSizeConfig.padding} font-medium transition-all duration-700 whitespace-nowrap font-roboto cursor-pointer
+                        ${isTabletSize ? "px-2 py-2" : currentSizeConfig.padding} font-medium transition-all duration-700 whitespace-nowrap font-roboto cursor-pointer flex items-center
                         ${
                           shouldShrink
-                            ? `${isTabletSize ? "text-xs" : currentSizeConfig.textSizeShrunken} text-white hover:text-[#13ee9e]`
-                            : `${isTabletSize ? "text-sm" : currentSizeConfig.textSize} text-white hover:text-[#13ee9e]`
+                            ? `${isTabletSize ? "text-sm" : currentSizeConfig.textSizeShrunken} text-white hover:text-[#13ee9e]`
+                            : `${isTabletSize ? "text-base" : currentSizeConfig.textSize} text-white hover:text-[#13ee9e]`
                         }
                       `}
                     >
@@ -432,11 +471,11 @@ const Navbar: React.FC<NavbarProps> = ({
                 <a
                   href="/about"
                   className={`
-                    ${isTabletSize ? "px-1 py-1" : currentSizeConfig.padding} font-medium transition-all duration-700 whitespace-nowrap navbar-links
+                    ${isTabletSize ? "px-2 py-2" : currentSizeConfig.padding} font-medium transition-all duration-700 whitespace-nowrap navbar-links flex items-center
                     ${
                       shouldShrink
-                        ? `${isTabletSize ? "text-xs" : currentSizeConfig.textSizeShrunken} text-white hover:text-[#13ee9e]`
-                        : `${isTabletSize ? "text-sm" : currentSizeConfig.textSize} text-white hover:text-[#13ee9e]`
+                        ? `${isTabletSize ? "text-sm" : currentSizeConfig.textSizeShrunken} text-white hover:text-[#13ee9e]`
+                        : `${isTabletSize ? "text-base" : currentSizeConfig.textSize} text-white hover:text-[#13ee9e]`
                     }
                   `}
                 >
@@ -444,17 +483,17 @@ const Navbar: React.FC<NavbarProps> = ({
                 </a>
               </div>
 
-              {/* Search Bar */}
+              {/* Search Bar - Hidden on screens smaller than 1280px to prevent overlap */}
               <div
                 className={`
-                transition-all duration-700 ease-in-out
+                hidden xl:flex items-center transition-all duration-700 ease-in-out
                 ${isTabletSize 
-                  ? (shouldShrink ? "w-24" : "w-32") 
+                  ? (shouldShrink ? "w-40" : "w-48") 
                   : (shouldShrink ? currentSizeConfig.searchWidthShrunken : currentSizeConfig.searchWidth)
                 }
               `}
               >
-                <div className="relative">
+                <div className="relative w-full flex items-center">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <MagnifyingGlassIcon className={`text-gray-400 ${shouldShrink ? "h-4 w-4" : "h-5 w-5"}`} />
                   </div>
@@ -464,15 +503,15 @@ const Navbar: React.FC<NavbarProps> = ({
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className={`
-                      text-white block w-full pl-10 pr-3 ${isTabletSize ? "py-1" : (shouldShrink ? currentSizeConfig.inputPadding : currentSizeConfig.inputPadding)} border rounded-lg leading-5 placeholder-gray-400 
+                      text-white block w-full pl-10 pr-3 ${isTabletSize ? "py-2" : (shouldShrink ? currentSizeConfig.inputPadding : currentSizeConfig.inputPadding)} border rounded-lg leading-5 placeholder-gray-400 
                       focus:outline-none focus:placeholder-gray-300 focus:ring-1 focus:ring-[#13ee9e] focus:border-[#13ee9e]
                       transition-all duration-700
                       ${
                         shouldBeTransparent
-                          ? `${isTabletSize ? "text-xs" : (shouldShrink ? currentSizeConfig.textSizeShrunken : currentSizeConfig.textSize)} border-gray-600/20 bg-gray-800/10`
+                          ? `${isTabletSize ? "text-sm" : (shouldShrink ? currentSizeConfig.textSizeShrunken : currentSizeConfig.textSize)} border-gray-600/20 bg-gray-800/10`
                           : shouldShrink
-                          ? `${isTabletSize ? "text-xs" : currentSizeConfig.textSizeShrunken} border-gray-600/40 bg-gray-800/60 backdrop-blur-sm`
-                          : `${isTabletSize ? "text-sm" : currentSizeConfig.textSize} border-gray-600 bg-gray-800`
+                          ? `${isTabletSize ? "text-sm" : currentSizeConfig.textSizeShrunken} border-gray-600/40 bg-gray-800/60 backdrop-blur-sm`
+                          : `${isTabletSize ? "text-base" : currentSizeConfig.textSize} border-gray-600 bg-gray-800`
                       }
                     `}
                   />
@@ -482,16 +521,35 @@ const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           {/* Right Section - Icons */}
-          <div className="flex-1 flex justify-end">
+          <div className="flex items-center justify-end flex-shrink-0">
             <div
               className={`
               flex items-center transition-all duration-700 ease-in-out
               ${isTabletSize 
-                ? (shouldShrink ? "space-x-1" : "space-x-2") 
+                ? (shouldShrink ? "space-x-2" : "space-x-3") 
                 : (shouldShrink ? currentSizeConfig.spacingShrunken : currentSizeConfig.spacing)
               }
             `}
             >
+              {/* Search Icon - Visible on screens smaller than xl (1280px) */}
+              <button
+                className={`
+                  xl:hidden p-2 transition-all duration-700 relative search-dropdown
+                  text-white hover:text-[#13ee9e]
+                `}
+                onClick={() => setIsSearchVisible(!isSearchVisible)}
+              >
+                <MagnifyingGlassIcon
+                  className={`
+                  transition-all duration-700 ease-in-out
+                  ${isTabletSize 
+                    ? (shouldShrink ? "h-5 w-5" : "h-6 w-6") 
+                    : (shouldShrink ? currentSizeConfig.iconSizeShrunken : currentSizeConfig.iconSize)
+                  }
+                `}
+                />
+              </button>
+
               {/* Wishlist Icon */}
               <div 
                 className="relative"
@@ -508,7 +566,7 @@ const Navbar: React.FC<NavbarProps> = ({
                     className={`
                     transition-all duration-700 ease-in-out
                     ${isTabletSize 
-                      ? (shouldShrink ? "h-4 w-4" : "h-5 w-5") 
+                      ? (shouldShrink ? "h-5 w-5" : "h-6 w-6") 
                       : (shouldShrink ? currentSizeConfig.iconSizeShrunken : currentSizeConfig.iconSize)
                     }
                   `}
@@ -547,7 +605,7 @@ const Navbar: React.FC<NavbarProps> = ({
                     className={`
                     transition-all duration-700 ease-in-out
                     ${isTabletSize 
-                      ? (shouldShrink ? "h-4 w-4" : "h-5 w-5") 
+                      ? (shouldShrink ? "h-5 w-5" : "h-6 w-6") 
                       : (shouldShrink ? currentSizeConfig.iconSizeShrunken : currentSizeConfig.iconSize)
                     }
                   `}
@@ -583,7 +641,7 @@ const Navbar: React.FC<NavbarProps> = ({
                   className={`
                   transition-all duration-700 ease-in-out
                   ${isTabletSize 
-                    ? (shouldShrink ? "h-6 w-6" : "h-7 w-7") 
+                    ? (shouldShrink ? "h-7 w-7" : "h-8 w-8") 
                     : (shouldShrink ? currentSizeConfig.profileIconSizeShrunken : currentSizeConfig.profileIconSize)
                   }
                 `}
@@ -608,6 +666,56 @@ const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
+        {/* Mobile Search Dropdown - Appears when search icon is clicked */}
+        {isSearchVisible && (
+          <div
+            className={`
+              xl:hidden transition-all duration-300 ease-in-out border-t search-dropdown
+              ${
+                shouldBeTransparent
+                  ? "bg-transparent border-gray-600/20"
+                  : shouldShrink
+                  ? "backdrop-blur-sm border-white/10"
+                  : "border-gray-600"
+              }
+            `}
+            style={{
+              backgroundColor: shouldBeTransparent 
+                ? 'transparent' 
+                : shouldShrink 
+                ? 'rgba(0, 3, 8, 0.2)'
+                : '#000308'
+            }}
+          >
+            <div className="px-4 py-3">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className={`
+                    text-white block w-full pl-10 pr-3 py-2 border rounded-lg leading-5 placeholder-gray-400 
+                    focus:outline-none focus:placeholder-gray-300 focus:ring-1 focus:ring-[#13ee9e] focus:border-[#13ee9e] text-base
+                    transition-all duration-700
+                    ${
+                      shouldBeTransparent
+                        ? "border-gray-600/20 bg-gray-800/10"
+                        : shouldShrink
+                        ? "border-gray-600/40 bg-gray-800/60"
+                        : "border-gray-600 bg-gray-800"
+                    }
+                  `}
+                  autoFocus
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Mobile Menu */}
         {isMenuOpen && (
           <div
@@ -630,33 +738,6 @@ const Navbar: React.FC<NavbarProps> = ({
             }}
           >
             <div className="px-2 pt-2 pb-3 space-y-1">
-              {/* Mobile Search */}
-              <div className="px-3 py-2">
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Search products..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className={`
-                      text-white block w-full pl-10 pr-3 ${currentSizeConfig.inputPadding} border rounded-lg leading-5 placeholder-gray-400 
-                      focus:outline-none focus:placeholder-gray-300 focus:ring-1 focus:ring-[#13ee9e] focus:border-[#13ee9e] ${currentSizeConfig.textSizeShrunken}
-                      transition-all duration-700
-                      ${
-                        shouldBeTransparent
-                          ? "border-gray-600/20 bg-gray-800/10"
-                          : shouldShrink
-                          ? "border-gray-600/40 bg-gray-800/60"
-                          : "border-gray-600 bg-gray-800"
-                      }
-                    `}
-                  />
-                </div>
-              </div>
-
               {/* Mobile Navigation Links */}
               <a
                 href="/"
