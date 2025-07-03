@@ -11,18 +11,22 @@ import { Images } from "../../assets/assets";
 import CartDropdown from "../Cart/CartDropdown";
 import WishlistDropdown from "../Wishlist/WishlistDropdown";
 import { sampleCartItems, type CartItem } from "../../data/cartData";
-import { sampleWishlistItems, type WishlistItem } from "../../data/wishlistData";
+import type { WishlistItem } from "../../data/wishlistData";
 
 interface NavbarProps {
   enableShrinking?: boolean;
   shrinkThreshold?: number;
   size?: "xs" | "sm" | "md" | "lg" | "xl";
+  wishlistItems?: WishlistItem[];
+  onWishlistChange?: (items: WishlistItem[]) => void;
 }
 
 const Navbar: React.FC<NavbarProps> = ({
   enableShrinking = true,
   shrinkThreshold = 50,
   size = "md",
+  wishlistItems = [],
+  onWishlistChange,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -31,7 +35,6 @@ const Navbar: React.FC<NavbarProps> = ({
   const [isCartVisible, setIsCartVisible] = useState(false);
   const [isWishlistVisible, setIsWishlistVisible] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>(sampleCartItems);
-  const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>(sampleWishlistItems);
 
   // Cart functionality
   const handleUpdateQuantity = (id: string, quantity: number) => {
@@ -63,13 +66,12 @@ const Navbar: React.FC<NavbarProps> = ({
     };
 
     // Check if item already exists in wishlist
-    setWishlistItems(prev => {
-      const existingItem = prev.find(item => item.id === wishlistItem.id);
+    if (onWishlistChange) {
+      const existingItem = wishlistItems.find(item => item.id === wishlistItem.id);
       if (!existingItem) {
-        return [...prev, wishlistItem];
+        onWishlistChange([...wishlistItems, wishlistItem]);
       }
-      return prev; // Don't add duplicate
-    });
+    }
 
     // Remove entire item from cart (regardless of quantity)
     // This is intentional - when moving to wishlist, we move the whole item
@@ -100,11 +102,15 @@ const Navbar: React.FC<NavbarProps> = ({
     });
 
     // Remove from wishlist after adding to cart
-    setWishlistItems(prev => prev.filter(item => item.id !== wishlistItem.id));
+    if (onWishlistChange) {
+      onWishlistChange(wishlistItems.filter(item => item.id !== wishlistItem.id));
+    }
   };
 
   const handleRemoveFromWishlist = (id: string) => {
-    setWishlistItems(prev => prev.filter(item => item.id !== id));
+    if (onWishlistChange) {
+      onWishlistChange(wishlistItems.filter(item => item.id !== id));
+    }
   };
 
   // Calculate totals - these will update whenever the state changes

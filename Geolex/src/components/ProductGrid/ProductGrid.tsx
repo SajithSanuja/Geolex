@@ -19,6 +19,16 @@ interface ProductGridProps {
   products: Product[];
   maxItems?: number;
   columns?: number;
+  wishlistItems?: string[]; // Array of product IDs that are in wishlist
+  onToggleWishlist?: (productId: string, productData: {
+    id: string;
+    name: string;
+    image: string;
+    price: number;
+    originalPrice?: number;
+    category: string;
+    inStock?: boolean;
+  }) => void;
 }
 
 const ProductGrid: React.FC<ProductGridProps> = ({
@@ -26,6 +36,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({
   products,
   maxItems,
   columns,
+  wishlistItems = [],
+  onToggleWishlist,
 }) => {
   const displayProducts = maxItems ? products.slice(0, maxItems) : products;
 
@@ -55,6 +67,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({
               discount={product.discount}
               rating={product.rating}
               reviewCount={product.reviewCount}
+              isInWishlist={wishlistItems.includes(product.id)}
+              onToggleWishlist={onToggleWishlist}
             />
           ))}
         </div>

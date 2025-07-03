@@ -3,12 +3,47 @@ import Banner from "../../components/Banner/Banner";
 import Categories from "../../components/Categories/Categories";
 import ProductGrid from "../../components/ProductGrid/ProductGrid";
 import { BannerImages, SampleProducts } from "../../assets/assets";
+import type { WishlistItem } from "../../data/wishlistData";
 
-const Home: React.FC = () => {
+interface HomeProps {
+  wishlistItems: WishlistItem[];
+  onWishlistChange: (items: WishlistItem[]) => void;
+}
+
+const Home: React.FC<HomeProps> = ({ wishlistItems, onWishlistChange }) => {
   const [showCategories, setShowCategories] = useState(false);
 
   const toggleCategories = () => {
     setShowCategories(!showCategories);
+  };
+
+  const handleToggleWishlist = (productId: string, productData: {
+    id: string;
+    name: string;
+    image: string;
+    price: number;
+    originalPrice?: number;
+    category: string;
+    inStock?: boolean;
+  }) => {
+    const existingIndex = wishlistItems.findIndex(item => item.id === productId);
+    
+    if (existingIndex >= 0) {
+      // Remove from wishlist
+      onWishlistChange(wishlistItems.filter(item => item.id !== productId));
+    } else {
+      // Add to wishlist
+      const newWishlistItem: WishlistItem = {
+        id: productData.id,
+        name: productData.name,
+        image: productData.image,
+        price: productData.price,
+        originalPrice: productData.originalPrice,
+        category: productData.category,
+        inStock: productData.inStock,
+      };
+      onWishlistChange([...wishlistItems, newWishlistItem]);
+    }
   };
 
   return (
@@ -102,6 +137,8 @@ const Home: React.FC = () => {
         products={SampleProducts}
         columns={4}
         maxItems={8}
+        wishlistItems={wishlistItems.map(item => item.id)}
+        onToggleWishlist={handleToggleWishlist}
       />
 
       {/* Welcome Section */}
