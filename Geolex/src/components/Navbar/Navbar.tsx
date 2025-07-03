@@ -354,12 +354,12 @@ const Navbar: React.FC<NavbarProps> = ({
     >
       <div
         className={`
-          px-4 sm:px-6 lg:px-8 transition-all duration-300 ease-in-out
+          px-2 sm:px-4 lg:px-8 transition-all duration-300 ease-in-out
           ${
             shouldBeTransparent
               ? "w-full bg-transparent" // Full transparent when shrinking disabled and not hovered
               : shouldShrink
-              ? "w-1/2 backdrop-blur-md rounded-b-2xl mx-auto shadow-lg border border-white/10"
+              ? "w-full sm:w-1/2 backdrop-blur-md sm:rounded-b-2xl sm:mx-auto shadow-lg border border-white/10"
               : "w-full"
           }
         `}
@@ -378,13 +378,13 @@ const Navbar: React.FC<NavbarProps> = ({
       >
         <div className={`flex items-center justify-between ${currentSizeConfig.height}`}>
           {/* Left Section - Logo */}
-          <div className="flex items-center justify-start flex-shrink-0">
+          <div className="flex items-center justify-start flex-shrink-0 min-w-0">
             <div className="flex-shrink-0 flex items-center">
               <img
                 src={Images.NavbarLogo}
                 alt="Geolex Logo"
                 className={`
-                  ${currentSizeConfig.logoSize} w-auto transition-all duration-700 ease-in-out
+                  ${currentSizeConfig.logoSize} w-auto transition-all duration-700 ease-in-out max-w-none
                   ${
                     shouldShrink
                       ? `opacity-100 ${currentSizeConfig.logoScaleShrunken}`
@@ -521,12 +521,12 @@ const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           {/* Right Section - Icons */}
-          <div className="flex items-center justify-end flex-shrink-0">
+          <div className="flex items-center justify-end flex-shrink-0 min-w-0">
             <div
               className={`
               flex items-center transition-all duration-700 ease-in-out
               ${isTabletSize 
-                ? (shouldShrink ? "space-x-2" : "space-x-3") 
+                ? (shouldShrink ? "space-x-1" : "space-x-2") 
                 : (shouldShrink ? currentSizeConfig.spacingShrunken : currentSizeConfig.spacing)
               }
             `}
@@ -630,10 +630,10 @@ const Navbar: React.FC<NavbarProps> = ({
                 />
               </div>
 
-              {/* Profile Icon */}
+              {/* Profile Icon - Hidden on very small screens to save space */}
               <button
                 className={`
-                  p-2 transition-all duration-700
+                  hidden sm:block p-2 transition-all duration-700
                   text-white hover:text-[#13ee9e]
                 `}
               >
@@ -648,18 +648,18 @@ const Navbar: React.FC<NavbarProps> = ({
                 />
               </button>
 
-              {/* Mobile Menu Button */}
+              {/* Mobile Menu Button - High priority for visibility on small screens */}
               <button
                 className={`
-                  md:hidden p-2 transition-all duration-700
-                  text-white hover:text-[#13ee9e]
+                  md:hidden p-1 sm:p-2 transition-all duration-700 flex-shrink-0
+                  text-white hover:text-[#13ee9e] border border-transparent hover:border-[#13ee9e]/30 rounded
                 `}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
               >
                 {isMenuOpen ? (
-                  <XMarkIcon className="h-6 w-6" />
+                  <XMarkIcon className="h-5 w-5 sm:h-6 sm:w-6" />
                 ) : (
-                  <Bars3Icon className="h-6 w-6" />
+                  <Bars3Icon className="h-5 w-5 sm:h-6 sm:w-6" />
                 )}
               </button>
             </div>
@@ -687,7 +687,7 @@ const Navbar: React.FC<NavbarProps> = ({
                 : '#000308'
             }}
           >
-            <div className="px-4 py-3">
+            <div className="px-2 sm:px-4 py-3">
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
@@ -737,7 +737,7 @@ const Navbar: React.FC<NavbarProps> = ({
                 : '#000308'
             }}
           >
-            <div className="px-2 pt-2 pb-3 space-y-1">
+            <div className="px-1 sm:px-2 pt-2 pb-3 space-y-1">
               {/* Mobile Navigation Links */}
               <a
                 href="/"

@@ -132,7 +132,7 @@ const CartDropdown: React.FC<CartDropdownProps> = ({
 
                     {/* Total Price for this item */}
                     <div className="flex justify-between items-center pt-2 border-t border-white/10">
-                      <span className="text-sm text-gray-300 font-roboto">Subtotal:</span>
+                      <span className="text-sm text-gray-300">Subtotal:</span>
                       <span className="text-sm font-semibold text-[#13ee9e]">
                         ${(item.price * item.quantity).toFixed(2)}
                       </span>
