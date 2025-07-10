@@ -39,6 +39,16 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
     new Set(filters.map(f => f.title))
   );
 
+  // Local state for input fields to allow free typing
+  const [minInputValue, setMinInputValue] = useState(selectedPriceRange.min.toString());
+  const [maxInputValue, setMaxInputValue] = useState(selectedPriceRange.max.toString());
+
+  // Update local input values when selectedPriceRange changes (from slider)
+  React.useEffect(() => {
+    setMinInputValue(selectedPriceRange.min.toString());
+    setMaxInputValue(selectedPriceRange.max.toString());
+  }, [selectedPriceRange]);
+
   // Convert price range to array format for Material-UI slider
   const priceRangeArray = [selectedPriceRange.min, selectedPriceRange.max];
 
@@ -72,6 +82,52 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
   const formatPrice = (price: number) => {
     return `Rs. ${price.toLocaleString()}`;
+  };
+
+  // Handle input changes - allow completely free typing
+  const handleMinInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMinInputValue(e.target.value);
+  };
+
+  const handleMaxInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMaxInputValue(e.target.value);
+  };
+
+  // Handle input blur (validate and apply changes)
+  const handleMinInputBlur = () => {
+    const value = Number(minInputValue);
+    if (!isNaN(value) && value >= priceRange.min && value <= priceRange.max) {
+      const clampedValue = Math.min(value, selectedPriceRange.max - minDistance);
+      const finalValue = Math.max(clampedValue, priceRange.min);
+      onPriceRangeChange({ min: finalValue, max: selectedPriceRange.max });
+    } else {
+      // Reset to current value if invalid
+      setMinInputValue(selectedPriceRange.min.toString());
+    }
+  };
+
+  const handleMaxInputBlur = () => {
+    const value = Number(maxInputValue);
+    if (!isNaN(value) && value >= priceRange.min && value <= priceRange.max) {
+      const clampedValue = Math.max(value, selectedPriceRange.min + minDistance);
+      const finalValue = Math.min(clampedValue, priceRange.max);
+      onPriceRangeChange({ min: selectedPriceRange.min, max: finalValue });
+    } else {
+      // Reset to current value if invalid
+      setMaxInputValue(selectedPriceRange.max.toString());
+    }
+  };
+
+  // Handle Enter key to apply changes immediately
+  const handleKeyDown = (e: React.KeyboardEvent, type: 'min' | 'max') => {
+    if (e.key === 'Enter') {
+      if (type === 'min') {
+        handleMinInputBlur();
+      } else {
+        handleMaxInputBlur();
+      }
+      (e.target as HTMLInputElement).blur();
+    }
   };
 
   return (
@@ -183,15 +239,12 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
               <div className="flex-1">
                 <input
                   type="number"
-                  value={selectedPriceRange.min}
-                  onChange={(e) => {
-                    const value = Number(e.target.value);
-                    if (value <= selectedPriceRange.max && value >= priceRange.min) {
-                      onPriceRangeChange({ min: value, max: selectedPriceRange.max });
-                    }
-                  }}
+                  value={minInputValue}
+                  onChange={handleMinInputChange}
+                  onBlur={handleMinInputBlur}
+                  onKeyDown={(e) => handleKeyDown(e, 'min')}
                   min={priceRange.min}
-                  max={selectedPriceRange.max}
+                  max={priceRange.max}
                   className="w-full px-3 py-2 bg-white text-gray-900 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Min"
                 />
@@ -199,14 +252,11 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
               <div className="flex-1">
                 <input
                   type="number"
-                  value={selectedPriceRange.max}
-                  onChange={(e) => {
-                    const value = Number(e.target.value);
-                    if (value >= selectedPriceRange.min && value <= priceRange.max) {
-                      onPriceRangeChange({ min: selectedPriceRange.min, max: value });
-                    }
-                  }}
-                  min={selectedPriceRange.min}
+                  value={maxInputValue}
+                  onChange={handleMaxInputChange}
+                  onBlur={handleMaxInputBlur}
+                  onKeyDown={(e) => handleKeyDown(e, 'max')}
+                  min={priceRange.min}
                   max={priceRange.max}
                   className="w-full px-3 py-2 bg-white text-gray-900 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Max"
