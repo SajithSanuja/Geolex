@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
 import Home from "./pages/HomePage/Home";
+import CategoryPage from "./pages/CategoryPage/CategoryPage";
+import About from "./pages/AboutPage/About";
 import type { WishlistItem } from "./data/wishlistData";
 import type { CartItem } from "./data/cartData";
 import "./App.css";
@@ -55,22 +58,51 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--background-color)' }}>
-      <Navbar 
-        enableShrinking={false} 
-        size="sm" 
-        wishlistItems={wishlistItems}
-        onWishlistChange={handleWishlistChange}
-        cartItems={cartItems}
-        onCartChange={handleCartChange}
-      />
-      <Home 
-        wishlistItems={wishlistItems}
-        onWishlistChange={handleWishlistChange}
-        cartItems={cartItems}
-        onCartChange={handleCartChange}
-      />
-    </div>
+    <Router>
+      <div className="min-h-screen" style={{ backgroundColor: 'var(--background-color)' }}>
+        <Navbar 
+          enableShrinking={false} 
+          size="sm" 
+          wishlistItems={wishlistItems}
+          onWishlistChange={handleWishlistChange}
+          cartItems={cartItems}
+          onCartChange={handleCartChange}
+        />
+        <Routes>
+          <Route 
+            path="/" 
+            element={
+              <Home 
+                wishlistItems={wishlistItems}
+                onWishlistChange={handleWishlistChange}
+                cartItems={cartItems}
+                onCartChange={handleCartChange}
+              />
+            } 
+          />
+          <Route 
+            path="/category/:categoryId" 
+            element={<CategoryPage />} 
+          />
+          <Route 
+            path="/category" 
+            element={<CategoryPage />} 
+          />
+          <Route 
+            path="/categories" 
+            element={<CategoryPage />} 
+          />
+          <Route 
+            path="/shop" 
+            element={<CategoryPage />} 
+          />
+          <Route 
+            path="/about" 
+            element={<About />} 
+          />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { Icons } from "../../assets/assets";
 
 interface Category {
@@ -306,9 +307,9 @@ const Categories: React.FC = () => {
         {/* Responsive Grid - All categories in one responsive grid */}
         <div className="flex flex-wrap justify-center gap-0 bg-[var(--category-bg)]">
           {categories.map((category) => (
-            <a
+            <Link
               key={category.id}
-              href={category.href}
+              to={`/category/${category.id}`}
               className={rectangleClasses.replace('flex-1', 'w-[50%] sm:w-[33.333%] md:w-[25%] lg:w-[20%] xl:w-[16.666%] 2xl:w-[14.285%]')}
             >
               <div className={`${CATEGORY_STYLES.icon.containerSize} flex items-center justify-center flex-shrink-0`}>
@@ -319,7 +320,7 @@ const Categories: React.FC = () => {
                 />
               </div>
               <span className={textClasses}>{category.name}</span>
-            </a>
+            </Link>
           ))}
         </div>
       </div>
