@@ -6,6 +6,8 @@ import CategoryProductGrid from '../../components/CategoryProductGrid/CategoryPr
 import Pagination from '../../components/Pagination/Pagination';
 import { sampleProducts, filterData, priceRange } from '../../data/categoryData';
 import type { Product } from '../../data/categoryData';
+import type { WishlistItem } from '../../data/wishlistData';
+import type { CartItem } from '../../data/cartData';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 
 interface FilterSection {
@@ -14,9 +16,21 @@ interface FilterSection {
   type: 'checkbox' | 'radio';
 }
 
-const CategoryPage: React.FC = () => {
+interface CategoryPageProps {
+  wishlistItems?: WishlistItem[];
+  onWishlistChange?: (items: WishlistItem[]) => void;
+  cartItems?: CartItem[];
+  onCartChange?: (items: CartItem[]) => void;
+}
+
+const CategoryPage: React.FC<CategoryPageProps> = ({ 
+  wishlistItems = [], 
+  onWishlistChange,
+  cartItems = [],
+  onCartChange 
+}) => {
   const { categoryId } = useParams<{ categoryId: string }>();
-  const [products, setProducts] = useState<Product[]>(sampleProducts);
+  const [products] = useState<Product[]>(sampleProducts);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(sampleProducts);
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({});
   const [selectedPriceRange, setSelectedPriceRange] = useState(priceRange);
@@ -174,19 +188,69 @@ const CategoryPage: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleAddToWishlist = (id: string) => {
-    setProducts(prev => 
-      prev.map(product => 
-        product.id === id 
-          ? { ...product, isWishlisted: !product.isWishlisted }
-          : product
-      )
-    );
+  const handleAddToWishlist = (productId: string, productData: {
+    id: string;
+    name: string;
+    image: string;
+    price: number;
+    originalPrice?: number;
+    category: string;
+    inStock?: boolean;
+  }) => {
+    if (!onWishlistChange) return;
+
+    const existingIndex = wishlistItems.findIndex(item => item.id === productId);
+    
+    if (existingIndex >= 0) {
+      // Remove from wishlist
+      onWishlistChange(wishlistItems.filter(item => item.id !== productId));
+    } else {
+      // Add to wishlist
+      const newWishlistItem: WishlistItem = {
+        id: productData.id,
+        name: productData.name,
+        image: productData.image,
+        price: productData.price,
+        originalPrice: productData.originalPrice,
+        category: productData.category,
+        inStock: productData.inStock,
+      };
+      onWishlistChange([...wishlistItems, newWishlistItem]);
+    }
   };
 
-  const handleAddToCart = (id: string) => {
-    console.log('Adding to cart:', id);
-    // Implement cart logic here
+  const handleAddToCart = (productId: string, productData: {
+    id: string;
+    name: string;
+    image: string;
+    price: number;
+    originalPrice?: number;
+    category: string;
+    inStock?: boolean;
+  }) => {
+    if (!onCartChange || !productData.inStock) return;
+
+    const existingItemIndex = cartItems.findIndex(item => item.id === productId);
+    
+    if (existingItemIndex >= 0) {
+      // Item exists, increase quantity
+      const updatedCartItems = cartItems.map(item =>
+        item.id === productId
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      );
+      onCartChange(updatedCartItems);
+    } else {
+      // Add new item to cart
+      const newCartItem: CartItem = {
+        id: productData.id,
+        name: productData.name,
+        image: productData.image,
+        price: productData.price,
+        quantity: 1,
+      };
+      onCartChange([...cartItems, newCartItem]);
+    }
   };
 
   const handleQuickView = (id: string) => {
@@ -271,6 +335,7 @@ const CategoryPage: React.FC = () => {
               onAddToWishlist={handleAddToWishlist}
               onAddToCart={handleAddToCart}
               onQuickView={handleQuickView}
+              wishlistItems={wishlistItems}
             />
 
             {/* Pagination */}

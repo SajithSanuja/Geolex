@@ -1,5 +1,7 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState } from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
+import Box from '@mui/material/Box';
+import Slider from '@mui/material/Slider';
 import './FilterSidebar.css';
 
 interface FilterOption {
@@ -23,97 +25,7 @@ interface FilterSidebarProps {
   onPriceRangeChange: (range: { min: number; max: number }) => void;
 }
 
-const DualRangeSlider: React.FC<{
-  min: number;
-  max: number;
-  value: { min: number; max: number };
-  onChange: (value: { min: number; max: number }) => void;
-}> = ({ min, max, value, onChange }) => {
-  const [isDragging, setIsDragging] = useState<'min' | 'max' | null>(null);
-  const sliderRef = useRef<HTMLDivElement>(null);
-
-  const getValueFromPosition = useCallback((clientX: number) => {
-    if (!sliderRef.current) return min;
-    
-    const rect = sliderRef.current.getBoundingClientRect();
-    const percentage = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-    return Math.round(min + percentage * (max - min));
-  }, [min, max]);
-
-  const handleMouseDown = useCallback((type: 'min' | 'max') => (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsDragging(type);
-  }, []);
-
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!isDragging) return;
-    
-    const newValue = getValueFromPosition(e.clientX);
-    
-    if (isDragging === 'min') {
-      onChange({ min: Math.min(newValue, value.max), max: value.max });
-    } else {
-      onChange({ min: value.min, max: Math.max(newValue, value.min) });
-    }
-  }, [isDragging, getValueFromPosition, value, onChange]);
-
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(null);
-  }, []);
-
-  React.useEffect(() => {
-    if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-      return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-      };
-    }
-  }, [isDragging, handleMouseMove, handleMouseUp]);
-
-  const minPercent = ((value.min - min) / (max - min)) * 100;
-  const maxPercent = ((value.max - min) / (max - min)) * 100;
-
-  return (
-    <div className="dual-range-container" ref={sliderRef}>
-      {/* Background Track */}
-      <div className="slider-track-bg"></div>
-      
-      {/* Active Range */}
-      <div 
-        className="slider-track-active"
-        style={{
-          left: `${minPercent}%`,
-          width: `${maxPercent - minPercent}%`
-        }}
-      ></div>
-      
-      {/* Min Thumb */}
-      <div 
-        className="slider-thumb slider-thumb-min"
-        style={{ left: `${minPercent}%` }}
-        onMouseDown={handleMouseDown('min')}
-      ></div>
-      
-      {/* Max Thumb */}
-      <div 
-        className="slider-thumb slider-thumb-max"
-        style={{ left: `${maxPercent}%` }}
-        onMouseDown={handleMouseDown('max')}
-      ></div>
-    </div>
-  );
-};
-
-interface FilterSidebarProps {
-  filters: FilterSection[];
-  selectedFilters: Record<string, string[]>;
-  onFilterChange: (sectionTitle: string, optionId: string, isSelected: boolean) => void;
-  priceRange: { min: number; max: number };
-  selectedPriceRange: { min: number; max: number };
-  onPriceRangeChange: (range: { min: number; max: number }) => void;
-}
+const minDistance = 1000; // Minimum distance between price range values
 
 const FilterSidebar: React.FC<FilterSidebarProps> = ({
   filters,
@@ -126,6 +38,27 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     new Set(filters.map(f => f.title))
   );
+
+  // Convert price range to array format for Material-UI slider
+  const priceRangeArray = [selectedPriceRange.min, selectedPriceRange.max];
+
+  const handlePriceSliderChange = (_event: Event, newValue: number[], activeThumb: number) => {
+    if (!Array.isArray(newValue)) {
+      return;
+    }
+
+    if (newValue[1] - newValue[0] < minDistance) {
+      if (activeThumb === 0) {
+        const clamped = Math.min(newValue[0], priceRange.max - minDistance);
+        onPriceRangeChange({ min: clamped, max: clamped + minDistance });
+      } else {
+        const clamped = Math.max(newValue[1], priceRange.min + minDistance);
+        onPriceRangeChange({ min: clamped - minDistance, max: clamped });
+      }
+    } else {
+      onPriceRangeChange({ min: newValue[0], max: newValue[1] });
+    }
+  };
 
   const toggleSection = (title: string) => {
     const newExpanded = new Set(expandedSections);
@@ -208,12 +141,36 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
             {/* Price Range Slider */}
             <div className="px-2">
               <div className="relative mb-6">
-                <DualRangeSlider
-                  min={priceRange.min}
-                  max={priceRange.max}
-                  value={selectedPriceRange}
-                  onChange={onPriceRangeChange}
-                />
+                <Box sx={{ width: '100%', px: 1 }}>
+                  <Slider
+                    getAriaLabel={() => 'Price range'}
+                    value={priceRangeArray}
+                    onChange={handlePriceSliderChange}
+                    valueLabelDisplay="auto"
+                    valueLabelFormat={(value) => `Rs. ${value.toLocaleString()}`}
+                    min={priceRange.min}
+                    max={priceRange.max}
+                    disableSwap
+                    sx={{
+                      color: '#151b25',
+                      '& .MuiSlider-thumb': {
+                        backgroundColor: '#151b25',
+                        border: '2px solid white',
+                        boxShadow: '0 2px 6px rgba(0, 0, 0, 0.15)',
+                        '&:hover': {
+                          backgroundColor: '#0f1419',
+                          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.25)',
+                        },
+                      },
+                      '& .MuiSlider-track': {
+                        backgroundColor: '#151b25',
+                      },
+                      '& .MuiSlider-rail': {
+                        backgroundColor: '#E5E7EB',
+                      },
+                    }}
+                  />
+                </Box>
                 <div className="flex justify-between text-sm text-gray-600 mt-3">
                   <span className="font-medium">{formatPrice(selectedPriceRange.min)}</span>
                   <span className="font-medium">{formatPrice(selectedPriceRange.max)}</span>

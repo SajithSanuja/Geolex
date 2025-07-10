@@ -1,5 +1,5 @@
 import React from 'react';
-import ProductCard from '../ProductCard/ProductCard';
+import ProductBox from '../ProductBox/ProductBox';
 
 interface Product {
   id: string;
@@ -17,17 +17,43 @@ interface Product {
 
 interface CategoryProductGridProps {
   products: Product[];
-  onAddToWishlist: (id: string) => void;
-  onAddToCart: (id: string) => void;
+  onAddToWishlist: (productId: string, productData: {
+    id: string;
+    name: string;
+    image: string;
+    price: number;
+    originalPrice?: number;
+    category: string;
+    inStock?: boolean;
+  }) => void;
+  onAddToCart: (productId: string, productData: {
+    id: string;
+    name: string;
+    image: string;
+    price: number;
+    originalPrice?: number;
+    category: string;
+    inStock?: boolean;
+  }) => void;
   onQuickView: (id: string) => void;
+  wishlistItems?: { id: string }[];
 }
 
 const CategoryProductGrid: React.FC<CategoryProductGridProps> = ({
   products,
   onAddToWishlist,
   onAddToCart,
-  onQuickView,
+  onQuickView: _onQuickView,
+  wishlistItems = [],
 }) => {
+  const handleToggleWishlist = (productId: string, productData: any) => {
+    onAddToWishlist(productId, productData);
+  };
+
+  const handleAddToCart = (productId: string, productData: any) => {
+    onAddToCart(productId, productData);
+  };
+
   if (products.length === 0) {
     return (
       <div className="flex items-center justify-center py-12 bg-white rounded-lg shadow-sm border border-gray-200">
@@ -42,7 +68,7 @@ const CategoryProductGrid: React.FC<CategoryProductGridProps> = ({
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {products.map((product) => (
-        <ProductCard
+        <ProductBox
           key={product.id}
           id={product.id}
           name={product.name}
@@ -51,11 +77,12 @@ const CategoryProductGrid: React.FC<CategoryProductGridProps> = ({
           image={product.image}
           category={product.category}
           inStock={product.inStock}
-          isOnSale={product.isOnSale}
-          isWishlisted={product.isWishlisted}
-          onAddToWishlist={onAddToWishlist}
-          onAddToCart={onAddToCart}
-          onQuickView={onQuickView}
+          discount={product.isOnSale ? 10 : undefined}
+          rating={4.5}
+          reviewCount={10}
+          isInWishlist={wishlistItems.some(item => item.id === product.id)}
+          onToggleWishlist={handleToggleWishlist}
+          onAddToCart={handleAddToCart}
         />
       ))}
     </div>

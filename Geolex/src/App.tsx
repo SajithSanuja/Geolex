@@ -82,19 +82,47 @@ function App() {
           />
           <Route 
             path="/category/:categoryId" 
-            element={<CategoryPage />} 
+            element={
+              <CategoryPage 
+                wishlistItems={wishlistItems} 
+                onWishlistChange={setWishlistItems}
+                cartItems={cartItems}
+                onCartChange={setCartItems}
+              />
+            } 
           />
           <Route 
             path="/category" 
-            element={<CategoryPage />} 
+            element={
+              <CategoryPage 
+                wishlistItems={wishlistItems} 
+                onWishlistChange={setWishlistItems}
+                cartItems={cartItems}
+                onCartChange={setCartItems}
+              />
+            } 
           />
           <Route 
             path="/categories" 
-            element={<CategoryPage />} 
+            element={
+              <CategoryPage 
+                wishlistItems={wishlistItems} 
+                onWishlistChange={setWishlistItems}
+                cartItems={cartItems}
+                onCartChange={setCartItems}
+              />
+            } 
           />
           <Route 
             path="/shop" 
-            element={<CategoryPage />} 
+            element={
+              <CategoryPage 
+                wishlistItems={wishlistItems} 
+                onWishlistChange={setWishlistItems}
+                cartItems={cartItems}
+                onCartChange={setCartItems}
+              />
+            } 
           />
           <Route 
             path="/about" 
